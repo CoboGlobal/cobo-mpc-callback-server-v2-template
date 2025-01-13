@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+build/
+
+# Virtual Environment
+venv/
+.python-version
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Project specific
+logs/
+*.log
+*.key
+*.pem
+gunicorn.pid
