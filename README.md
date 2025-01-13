@@ -48,6 +48,19 @@ For comprehensive understanding and implementation details, refer to:
 - [Official Documentation](https://www.cobo.com/developers/v2/guides/mpc-wallets/server-co-signer/callback-server-overview)
 - Language-specific README files in respective directories
 
+
+## Comparison with cobo-mpc-callback-server-examples
+
+There are two different template repositories available:
+
+- [cobo-mpc-callback-server-examples](https://github.com/CoboGlobal/cobo-mpc-callback-server-examples)
+    - Uses WaaS SDK (v1)
+ 
+- This repository (cobo-mpc-callback-server-v2-template)
+    - Uses WaaS2 SDK
+
+Please choose the appropriate template based on your WaaS SDK version.
+
 ## Contributing
 
 We welcome contributions to improve the template. Please feel free to submit issues and pull requests.
