@@ -18,7 +18,7 @@ cd cobo-mpc-callback-server-v2-template/cobo-mpc-callback-server-v2-java
 ```
 
 ### 2. Build
-```bash 
+```bash
 mvn compile clean
 mvn compile
 ```
@@ -31,7 +31,7 @@ Place the following key files in the project root directory:
 - configs/callback-server-pri.pem (Callback server's RSA private key)
 
 ### 4. Start the Server
-```bash 
+```bash
 mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath com.cobo.callback.Application"
 ```
 

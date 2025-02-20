@@ -18,7 +18,7 @@ cd cobo-mpc-callback-server-v2-template/cobo-mpc-callback-server-v2-python
 ```
 
 ### 2. Install Dependencies
-```bash 
+```bash
 pip install -r requirements.txt
 ```
 
@@ -30,7 +30,7 @@ Place the following key files in the project root directory:
 - configs/callback-server-pri.pem (Callback server's RSA private key)
 
 ### 4. Start the Server
-```bash 
+```bash
 python3 run.py
 ```
 

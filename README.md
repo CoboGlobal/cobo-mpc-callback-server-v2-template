@@ -55,7 +55,7 @@ There are two different template repositories available:
 
 - [cobo-mpc-callback-server-examples](https://github.com/CoboGlobal/cobo-mpc-callback-server-examples)
     - Uses WaaS SDK (v1)
- 
+
 - This repository (cobo-mpc-callback-server-v2-template)
     - Uses WaaS2 SDK
 
