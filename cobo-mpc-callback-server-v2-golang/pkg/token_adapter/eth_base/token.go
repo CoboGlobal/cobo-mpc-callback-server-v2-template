@@ -7,15 +7,32 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-type EthBaseChain struct {
+func init() {
+	if err := token_adapter.RegisterTokenCreator("ETH", NewEthToken); err != nil {
+		panic(err)
+	}
 }
 
-func NewEthBaseToken() token_adapter.Token {
-	return &EthBaseChain{}
+type EthBaseToken struct {
+	tokenID    string
+	erc20Token bool
 }
 
-func (e *EthBaseChain) BuildTransaction(txInfo *token_adapter.TransactionInfo) (token_adapter.Transaction, error) {
+func NewEthToken(tokenID string) token_adapter.Token {
+	return &EthBaseToken{
+		tokenID:    tokenID,
+		erc20Token: false,
+	}
+}
 
+func NewErc20Token(tokenID string) token_adapter.Token {
+	return &EthBaseToken{
+		tokenID:    tokenID,
+		erc20Token: true,
+	}
+}
+
+func (e *EthBaseToken) BuildTransaction(txInfo *token_adapter.TransactionInfo) (token_adapter.Transaction, error) {
 	preTxData, err := prepareBuildTransactionData(txInfo)
 	if err != nil {
 		return nil, fmt.Errorf("prepare build transaction data error: %w", err)
@@ -26,7 +43,7 @@ func (e *EthBaseChain) BuildTransaction(txInfo *token_adapter.TransactionInfo) (
 		return nil, fmt.Errorf("prepare eth transaction error: %w", err)
 	}
 
-	return &EthBaseTransaction{tx: tx, PrepareTransactionData: preTxData}, nil
+	return &EthBaseTransaction{tx: tx, PrepareTransactionData: preTxData, token: e}, nil
 }
 
 func prepareBuildTransactionData(txInfo *token_adapter.TransactionInfo) (data *PrepareTransactionData, err error) {

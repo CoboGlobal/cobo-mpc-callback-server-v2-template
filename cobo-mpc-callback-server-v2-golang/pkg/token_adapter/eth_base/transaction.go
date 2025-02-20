@@ -18,6 +18,7 @@ var hashPool = sync.Pool{
 }
 
 type EthBaseTransaction struct {
+	token *EthBaseToken
 	*PrepareTransactionData
 	tx *types.Transaction
 }
@@ -39,10 +40,40 @@ func (et *EthBaseTransaction) GetHashes() ([]string, error) {
 
 // GetDestinationAddresses implements Transaction interface for Ethereum
 func (et *EthBaseTransaction) GetDestinationAddresses() ([]string, error) {
-	var addresses []string
-	if to := et.tx.To(); to != nil {
-		addresses = append(addresses, to.Hex())
+	if et.tx == nil {
+		return nil, fmt.Errorf("transaction is nil")
 	}
+
+	var addresses []string
+
+	if et.token.erc20Token {
+		// parse ERC20 transfer destination addresses
+		// ERC20 transfer method ID: 0xa9059cbb
+		input := et.tx.Data()
+		if len(input) < 4+32 { // method(4) + address(32)
+			return nil, fmt.Errorf("invalid ERC20 transfer data length")
+		}
+
+		// check method ID: transfer
+		methodID := input[:4]
+		if common.Bytes2Hex(methodID) != "a9059cbb" {
+			return nil, fmt.Errorf("not an ERC20 transfer method")
+		}
+
+		// parse destination addresses
+		addressBytes := input[4:36]
+		address := common.BytesToAddress(addressBytes)
+		addresses = append(addresses, address.Hex())
+
+	} else {
+		// eth transfer
+		if to := et.tx.To(); to != nil {
+			addresses = append(addresses, to.Hex())
+		} else {
+			return []string{}, nil
+		}
+	}
+
 	return addresses, nil
 }
 
