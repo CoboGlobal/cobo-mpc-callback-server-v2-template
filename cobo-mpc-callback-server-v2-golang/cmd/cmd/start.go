@@ -20,7 +20,7 @@ func start() {
 	}
 
 	go trapSignal()
-	srv := service.New(CfgInstance, &verifier.TssVerifier{})
+	srv := service.New(CfgInstance, verifier.NewTssVerifier(CfgInstance.AddressWhitelist))
 	srv.Start()
 }
 

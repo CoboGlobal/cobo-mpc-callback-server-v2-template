@@ -12,10 +12,13 @@ type Verifier interface {
 }
 
 type TssVerifier struct {
+	addressWhitelist []string
 }
 
-func (v *TssVerifier) New() Verifier {
-	return &TssVerifier{}
+func NewTssVerifier(addressWhitelist []string) Verifier {
+	return &TssVerifier{
+		addressWhitelist: addressWhitelist,
+	}
 }
 
 func (v *TssVerifier) Verify(request *types.Request) error {
@@ -80,6 +83,11 @@ func (v *TssVerifier) handleKeySign(requestDetail, extraInfo string) error {
 	log.Debugf("key sign detail:\n%v\nrequest info:\n%v", detail, requestInfo.String())
 
 	// key sign logic add here
+
+	//verify sign for example
+	if err := v.verifySign(&detail, &requestInfo); err != nil {
+		return fmt.Errorf("verify sign error: %w", err)
+	}
 
 	return nil
 }
