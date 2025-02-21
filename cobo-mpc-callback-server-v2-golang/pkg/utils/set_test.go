@@ -86,7 +86,7 @@ func TestIsSubset(t *testing.T) {
 			name:   "empty A",
 			s1:     []int{},
 			s2:     []int{1, 2, 3},
-			expect: true,
+			expect: false,
 		},
 		{
 			name:   "empty B",

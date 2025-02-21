@@ -7,12 +7,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func init() {
-	if err := token_adapter.RegisterTokenCreator("ETH", NewEthToken); err != nil {
-		panic(err)
-	}
-}
-
 type EthBaseToken struct {
 	tokenID    string
 	erc20Token bool

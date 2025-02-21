@@ -29,6 +29,9 @@ func ElementDiff[T comparable](listA, listB []T) map[T]int {
 
 // IsSubset checks if listA is a subset of listB.
 func IsSubset[T comparable](listA, listB []T) bool {
+	if len(listA) == 0 || len(listB) == 0 {
+		return false
+	}
 	diff := ElementDiff(listA, listB)
 	for _, count := range diff {
 		if count > 0 {

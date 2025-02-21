@@ -11,8 +11,8 @@ func (v *TssVerifier) verifySign(detail *types.KeySignDetail, requestInfo *types
 	if detail == nil || requestInfo == nil {
 		return fmt.Errorf("detail or request info is nil")
 	}
-	if requestInfo.Transaction == nil {
-		return fmt.Errorf("transaction is nil")
+	if requestInfo.Transaction == nil || requestInfo.Transaction.TokenId == nil {
+		return fmt.Errorf("transaction or token id is nil")
 	}
 
 	// get token

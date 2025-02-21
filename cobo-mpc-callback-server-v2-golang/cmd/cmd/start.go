@@ -9,6 +9,7 @@ import (
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/service"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/verifier"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/log"
+	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/token_adapter/token_registry"
 )
 
 func start() {
@@ -20,6 +21,9 @@ func start() {
 	}
 
 	go trapSignal()
+
+	token_registry.InitRegistry()
+
 	srv := service.New(CfgInstance, verifier.NewTssVerifier(CfgInstance.AddressWhitelist))
 	srv.Start()
 }
