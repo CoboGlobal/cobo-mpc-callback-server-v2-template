@@ -13,5 +13,5 @@ func InitRegistry() {
 	if err := token_adapter.RegisterTokenCreator("ETH_USDT", eth_base.NewErc20Token); err != nil {
 		panic(err)
 	}
-	
+
 }
