@@ -49,19 +49,19 @@ func TestIsEqualSet(t *testing.T) {
 			name:   "dup not equal A",
 			s1:     []int{1, 2, 3},
 			s2:     []int{1, 2, 3, 3},
-			expect: false,
+			expect: true,
 		},
 		{
 			name:   "dup not equal B",
 			s1:     []int{1, 2, 3, 2},
 			s2:     []int{1, 2, 3, 3},
-			expect: false,
+			expect: true,
 		},
 		{
 			name:   "dup not equal C",
 			s1:     []int{1, 2, 3, 3},
 			s2:     []int{1, 2, 3},
-			expect: false,
+			expect: true,
 		},
 	}
 
@@ -122,7 +122,7 @@ func TestIsSubset(t *testing.T) {
 			name:   "dup subset A",
 			s1:     []int{1, 2, 2},
 			s2:     []int{1, 2, 3},
-			expect: false,
+			expect: true,
 		},
 		{
 			name:   "dup subset B",
@@ -133,8 +133,8 @@ func TestIsSubset(t *testing.T) {
 		{
 			name:   "dup subset C",
 			s1:     []int{1, 2, 3, 3},
-			s2:     []int{1, 2, 2, 4},
-			expect: false,
+			s2:     []int{1, 2, 2, 3, 4},
+			expect: true,
 		},
 	}
 

@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/CoboGlobal/cobo-waas2-go-sdk v1.9.0
+	github.com/deckarep/golang-set/v2 v2.6.0
 	github.com/ethereum/go-ethereum v1.15.2
 	github.com/gin-gonic/gin v1.10.0
 )
