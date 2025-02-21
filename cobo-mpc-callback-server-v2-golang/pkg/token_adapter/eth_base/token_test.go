@@ -35,7 +35,7 @@ func TestEthBaseToken_BuildTransaction(t *testing.T) {
 			txInfo: &token_adapter.TransactionInfo{
 				Transaction: &coboWaaS2.Transaction{
 					RawTxInfo: &coboWaaS2.TransactionRawTxInfo{
-						RawTx: &ethRawTx,
+						UnsignedRawTx: &ethRawTx,
 					},
 				},
 			},
@@ -46,7 +46,7 @@ func TestEthBaseToken_BuildTransaction(t *testing.T) {
 			txInfo: &token_adapter.TransactionInfo{
 				Transaction: &coboWaaS2.Transaction{
 					RawTxInfo: &coboWaaS2.TransactionRawTxInfo{
-						RawTx: &ethEip1559RawTx,
+						UnsignedRawTx: &ethEip1559RawTx,
 					},
 				},
 			},
@@ -57,7 +57,7 @@ func TestEthBaseToken_BuildTransaction(t *testing.T) {
 			txInfo: &token_adapter.TransactionInfo{
 				Transaction: &coboWaaS2.Transaction{
 					RawTxInfo: &coboWaaS2.TransactionRawTxInfo{
-						RawTx: &erc20RawTx,
+						UnsignedRawTx: &erc20RawTx,
 					},
 				},
 			},
@@ -73,7 +73,7 @@ func TestEthBaseToken_BuildTransaction(t *testing.T) {
 			txInfo: &token_adapter.TransactionInfo{
 				Transaction: &coboWaaS2.Transaction{
 					RawTxInfo: &coboWaaS2.TransactionRawTxInfo{
-						RawTx: nil,
+						UnsignedRawTx: nil,
 					},
 				},
 			},

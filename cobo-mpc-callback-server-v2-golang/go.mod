@@ -3,7 +3,7 @@ module github.com/CoboGlobal/cobo-mpc-callback-server-v2
 go 1.23.1
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.8.0
+	github.com/CoboGlobal/cobo-waas2-go-sdk v1.9.0
 	github.com/ethereum/go-ethereum v1.15.2
 	github.com/gin-gonic/gin v1.10.0
 )

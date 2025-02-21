@@ -41,11 +41,11 @@ func (e *EthBaseToken) BuildTransaction(txInfo *token_adapter.TransactionInfo) (
 }
 
 func prepareBuildTransactionData(txInfo *token_adapter.TransactionInfo) (data *PrepareTransactionData, err error) {
-	if txInfo == nil || txInfo.Transaction == nil || txInfo.Transaction.RawTxInfo == nil || txInfo.Transaction.RawTxInfo.RawTx == nil {
+	if txInfo == nil || txInfo.Transaction == nil || txInfo.Transaction.RawTxInfo == nil || txInfo.Transaction.RawTxInfo.UnsignedRawTx == nil {
 		return nil, fmt.Errorf("transaction info raw tx is nil")
 	}
 
-	rawTx := *txInfo.Transaction.RawTxInfo.RawTx
+	rawTx := *txInfo.Transaction.RawTxInfo.UnsignedRawTx
 	rawTxBytes := common.FromHex(rawTx)
 
 	return &PrepareTransactionData{rawTx: rawTxBytes}, nil

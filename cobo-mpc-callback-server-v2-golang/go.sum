@@ -1,5 +1,5 @@
-github.com/CoboGlobal/cobo-waas2-go-sdk v1.8.0 h1:bgC9INJCYjdMwHOZjBbHOICtaAc1A0cNZcmCb9u50PI=
-github.com/CoboGlobal/cobo-waas2-go-sdk v1.8.0/go.mod h1:a355LlDmGbYcDqzdGyebZ5PmtNS/5cYNUPPpkJo5p10=
+github.com/CoboGlobal/cobo-waas2-go-sdk v1.9.0 h1:rWJUbmW8YiqHWG9cFwu2t98JcayfLUnamtrEXcDFnxY=
+github.com/CoboGlobal/cobo-waas2-go-sdk v1.9.0/go.mod h1:a355LlDmGbYcDqzdGyebZ5PmtNS/5cYNUPPpkJo5p10=
 github.com/StackExchange/wmi v1.2.1 h1:VIkavFPXSjcnS+O8yTq7NI32k0R5Aj+v39y29VYDOSA=
 github.com/StackExchange/wmi v1.2.1/go.mod h1:rcmrprowKIVzvc+NUiLncP2uuArMWLCbu9SBzvHz7e8=
 github.com/VictoriaMetrics/fastcache v1.12.2 h1:N0y9ASrJ0F6h0QaC3o6uJb3NIZ9VKLjCM7NQbSmF7WI=
