@@ -18,7 +18,7 @@ cd cobo-mpc-callback-server-v2-template/cobo-mpc-callback-server-v2-golang
 ```
 
 ### 2. Build
-```bash 
+```bash
 go build -trimpath -o build/bin/tss-node-callback-server cmd/main.go
 ```
 ### 3. Configure Keys
@@ -29,7 +29,7 @@ Place the following key files in the project root directory:
 - configs/callback-server-pri.pem (Callback server's RSA private key)
 
 ### 4. Start the Server
-```bash 
+```bash
 ./build/bin/tss-node-callback-server
 ```
 

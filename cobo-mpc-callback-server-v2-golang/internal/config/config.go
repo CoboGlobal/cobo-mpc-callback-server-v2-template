@@ -5,5 +5,6 @@ import (
 )
 
 type Config struct {
-	CallbackServer netService.Config `mapstructure:"callback_server"`
+	CallbackServer   netService.Config `mapstructure:"callback_server"`
+	AddressWhitelist []string          `mapstructure:"address_whitelist"`
 }
