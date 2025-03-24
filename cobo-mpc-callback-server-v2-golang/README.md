@@ -67,3 +67,10 @@ Implement your own callback logic based on your business requirements.
 
 The `extra_info` risk control parameter structure is defined in [cobo-waas2-go-sdk](https://github.com/CoboGlobal/cobo-waas2-go-sdk)
 Refer to the SDK documentation for detailed parameter definitions.
+
+## Auto-sweeping implementation
+
+For MPC Wallets with auto-sweeping enabled, implement the whitelisting configuration to automatically approve transactions 
+when the transaction hash is verified and the destination address is whitelisted.
+
+Configure the `address_whitelist` in [callback-server-config.yaml](configs/callback-server-config.yaml).
