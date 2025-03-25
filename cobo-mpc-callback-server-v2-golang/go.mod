@@ -8,7 +8,7 @@ require (
 	github.com/ethereum/go-ethereum v1.15.2
 	github.com/fbsobreira/gotron-sdk v0.0.0-20230907131216-1e824406fe8c
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang/protobuf v1.5.4
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
@@ -81,6 +81,5 @@ require (
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
-	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
