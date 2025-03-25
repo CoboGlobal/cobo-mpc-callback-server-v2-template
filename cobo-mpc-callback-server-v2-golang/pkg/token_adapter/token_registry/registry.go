@@ -3,6 +3,7 @@ package token_registry
 import (
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/token_adapter"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/token_adapter/eth_base"
+	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/token_adapter/tron"
 )
 
 func InitRegistry() {
@@ -14,4 +15,11 @@ func InitRegistry() {
 		panic(err)
 	}
 
+	if err := token_adapter.RegisterTokenCreator("TRON", tron.NewToken); err != nil {
+		panic(err)
+	}
+
+	if err := token_adapter.RegisterTokenCreator("TRON_USDT", tron.NewTrc20Token); err != nil {
+		panic(err)
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"hash"
 	"sync"
 
@@ -30,12 +31,21 @@ type PrepareTransactionData struct {
 
 // GetHashes implements Transaction interface for Tron
 func (t *Transaction) GetHashes() ([]string, error) {
-	var hashes []string
-	h, err := TronHash(t.rawTx)
-	if err != nil {
-		return nil, fmt.Errorf("calc tron hash error: %w", err)
+	if len(t.rawTx) == 0 {
+		return nil, fmt.Errorf("transaction raw data is empty")
 	}
-	hashes = append(hashes, "0x"+h)
+	var hashes []string
+	sha, ok := hashPool.Get().(hash.Hash)
+	if !ok {
+		return nil, fmt.Errorf("failed to get SHA256 from pool")
+	}
+	defer hashPool.Put(sha)
+
+	sha.Reset()
+	sha.Write(t.rawTx)
+	hash := sha.Sum(nil)
+	hashStr := hex.EncodeToString(hash)
+	hashes = append(hashes, "0x"+hashStr)
 	return hashes, nil
 }
 
@@ -81,10 +91,12 @@ func (t *Transaction) GetDestinationAddresses() ([]string, error) {
 		// Extract address (note: Tron addresses need special handling)
 		addressBytes := data[16:36]
 		// Convert to Tron address format
+		addressBytes = append([]byte{0x41}, addressBytes...)
 
-		addresses = append(addresses, string(addressBytes))
+		tronAddress := address.Address(addressBytes)
+		addresses = append(addresses, tronAddress.String())
 	} else {
-		// Native TRX transfer
+		// Native TRON transfer
 		if contractType != core.Transaction_Contract_TransferContract {
 			return nil, fmt.Errorf("not a TRX transfer contract")
 		}
@@ -93,8 +105,8 @@ func (t *Transaction) GetDestinationAddresses() ([]string, error) {
 		if err := proto.Unmarshal(contract.GetParameter().GetValue(), parameter); err != nil {
 			return nil, fmt.Errorf("unmarshal transfer contract error: %w", err)
 		}
-
-		addresses = append(addresses, string(parameter.GetToAddress()))
+		tronAddress := address.Address(parameter.GetToAddress())
+		addresses = append(addresses, tronAddress.String())
 	}
 
 	return addresses, nil
@@ -107,29 +119,4 @@ func ParseTronTransaction(rawTx []byte) (*core.TransactionRaw, error) {
 		return nil, fmt.Errorf("failed to unmarshal transaction: %w", err)
 	}
 	return tx, nil
-}
-
-// TronHash calculates the hash of a Tron transaction raw data
-func TronHash(data []byte) (string, error) {
-	tx := new(core.TransactionRaw)
-	if err := proto.Unmarshal(data, tx); err != nil {
-		return "", fmt.Errorf("failed to unmarshal transaction for hash: %w", err)
-	}
-
-	// TransactionRaw is already the raw data, so we can hash it directly
-	rawData, err := proto.Marshal(tx)
-	if err != nil {
-		return "", fmt.Errorf("failed to marshal raw data: %w", err)
-	}
-
-	sha, ok := hashPool.Get().(hash.Hash)
-	if !ok {
-		return "", fmt.Errorf("failed to get SHA256 from pool")
-	}
-	defer hashPool.Put(sha)
-
-	sha.Reset()
-	sha.Write(rawData)
-	hash := sha.Sum(nil)
-	return hex.EncodeToString(hash), nil
 }

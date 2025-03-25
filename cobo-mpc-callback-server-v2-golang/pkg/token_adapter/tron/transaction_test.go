@@ -1,16 +1,15 @@
 package tron
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTransaction_GetHashes(t *testing.T) {
-	// Create a TRX transaction for testing
-	rawTxBytes := common.FromHex(trxRawTx)
+func Test_Transaction_GetHashes(t *testing.T) {
+	// Create a TRON transaction for testing
+	rawTxBytes := common.FromHex(tronRawTx)
 	tx, err := ParseTronTransaction(rawTxBytes)
 	assert.NoError(t, err)
 
@@ -29,16 +28,12 @@ func TestTransaction_GetHashes(t *testing.T) {
 	assert.NotEmpty(t, hashes)
 	assert.Equal(t, 1, len(hashes))
 
-	fmt.Printf("Hashes: %v\n", hashes)
-
-	// Ensure hash has the correct format (0x prefixed hex string)
-	assert.True(t, len(hashes[0]) > 2)
-	assert.Equal(t, "0x", hashes[0][:2])
+	assert.Equal(t, []string{"0xf872c594b7a2d2cc6647a6a090f870655e4856b877ff3e125644e2be27dd8b8d"}, hashes)
 }
 
-func TestTransaction_GetDestinationAddresses_TRX(t *testing.T) {
-	// Create a TRX transaction for testing
-	rawTxBytes := common.FromHex(trxRawTx)
+func Test_TRC20_Transaction_GetHashes(t *testing.T) {
+	// Create a TRC20 transaction for testing
+	rawTxBytes := common.FromHex(trc20RawTx)
 	tx, err := ParseTronTransaction(rawTxBytes)
 	assert.NoError(t, err)
 
@@ -48,20 +43,37 @@ func TestTransaction_GetDestinationAddresses_TRX(t *testing.T) {
 		PrepareTransactionData: &PrepareTransactionData{
 			rawTx: rawTxBytes,
 		},
-		token: &Token{tokenID: "TRX", trc20Token: false},
+		token: &Token{tokenID: "TRON_USDT", trc20Token: false},
+	}
+
+	// Test GetHashes method
+	hashes, err := tronTx.GetHashes()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, hashes)
+	assert.Equal(t, 1, len(hashes))
+
+	assert.Equal(t, []string{"0x0f6da9739ddfef69237e1e89adc3a4cbd9f11cc7e7451719bd720dba6949430c"}, hashes)
+}
+
+func TestTransaction_GetDestinationAddresses_TRON(t *testing.T) {
+	// Create a TRON transaction for testing
+	rawTxBytes := common.FromHex(tronRawTx)
+	tx, err := ParseTronTransaction(rawTxBytes)
+	assert.NoError(t, err)
+
+	// Create Transaction instance
+	tronTx := &Transaction{
+		tx: tx,
+		PrepareTransactionData: &PrepareTransactionData{
+			rawTx: rawTxBytes,
+		},
+		token: &Token{tokenID: "TRON", trc20Token: false},
 	}
 
 	// Test GetDestinationAddresses method
 	addresses, err := tronTx.GetDestinationAddresses()
 	assert.NoError(t, err)
-	assert.NotEmpty(t, addresses)
-
-	// Verify address format and count
-	assert.Equal(t, 1, len(addresses))
-
-	// Tron addresses typically start with "T" and are 34 characters long
-	assert.True(t, len(addresses[0]) > 0)
-	// Note: Specific address format validation depends on your implementation
+	assert.Equal(t, []string{"TEDv9wo5epcVi7pW3rEZUa7wbtPuAKZCer"}, addresses)
 }
 
 func TestTransaction_GetDestinationAddresses_TRC20(t *testing.T) {
@@ -76,27 +88,20 @@ func TestTransaction_GetDestinationAddresses_TRC20(t *testing.T) {
 		PrepareTransactionData: &PrepareTransactionData{
 			rawTx: rawTxBytes,
 		},
-		token: &Token{tokenID: "TRX_USDT", trc20Token: true},
+		token: &Token{tokenID: "TRON_USDT", trc20Token: true},
 	}
 
 	// Test GetDestinationAddresses method
 	addresses, err := tronTx.GetDestinationAddresses()
 	assert.NoError(t, err)
-	assert.NotEmpty(t, addresses)
-
-	// Verify address format and count
-	assert.Equal(t, 1, len(addresses))
-
-	// Tron addresses typically start with "T" and are 34 characters long
-	assert.True(t, len(addresses[0]) > 0)
-	// Note: Specific address format validation depends on your implementation
+	assert.Equal(t, []string{"THKAcY3fvSyfkzbYxj2aAgxC5R6YAPMJqa"}, addresses)
 }
 
 func TestTransaction_GetDestinationAddresses_InvalidContract(t *testing.T) {
 	// Test contract type mismatch scenarios
 
 	// Using TRX transaction but setting trc20Token to true
-	rawTxBytes := common.FromHex(trxRawTx)
+	rawTxBytes := common.FromHex(tronRawTx)
 	tx, err := ParseTronTransaction(rawTxBytes)
 	assert.NoError(t, err)
 
@@ -105,10 +110,10 @@ func TestTransaction_GetDestinationAddresses_InvalidContract(t *testing.T) {
 		PrepareTransactionData: &PrepareTransactionData{
 			rawTx: rawTxBytes,
 		},
-		token: &Token{tokenID: "TRX", trc20Token: true},
+		token: &Token{tokenID: "TRX_USDT", trc20Token: true},
 	}
 
-	// Expect error since TRX transaction is not TriggerSmartContract type
+	// Expect error since TRON transaction is not TriggerSmartContract type
 	addresses, err := tronTx.GetDestinationAddresses()
 	assert.Error(t, err)
 	assert.Nil(t, addresses)
@@ -123,7 +128,7 @@ func TestTransaction_GetDestinationAddresses_InvalidContract(t *testing.T) {
 		PrepareTransactionData: &PrepareTransactionData{
 			rawTx: rawTxBytes,
 		},
-		token: &Token{tokenID: "TRX_USDT", trc20Token: false},
+		token: &Token{tokenID: "TRON", trc20Token: false},
 	}
 
 	// Expect error since TRC20 transaction is not TransferContract type
@@ -139,7 +144,7 @@ func TestTransaction_NilTransaction(t *testing.T) {
 		PrepareTransactionData: &PrepareTransactionData{
 			rawTx: []byte{},
 		},
-		token: &Token{tokenID: "TRX", trc20Token: false},
+		token: &Token{tokenID: "TRON", trc20Token: false},
 	}
 
 	// GetDestinationAddresses should return error
@@ -156,7 +161,7 @@ func TestTransaction_NilTransaction(t *testing.T) {
 
 func TestParseTronTransaction(t *testing.T) {
 	// Test valid transaction
-	rawTxBytes := common.FromHex(trxRawTx)
+	rawTxBytes := common.FromHex(tronRawTx)
 	tx, err := ParseTronTransaction(rawTxBytes)
 	assert.NoError(t, err)
 	assert.NotNil(t, tx)
@@ -166,18 +171,4 @@ func TestParseTronTransaction(t *testing.T) {
 	tx, err = ParseTronTransaction(invalidRawTx)
 	assert.Error(t, err)
 	assert.Nil(t, tx)
-}
-
-func TestTronHash(t *testing.T) {
-	// Test valid transaction
-	rawTxBytes := common.FromHex(trxRawTx)
-	hash, err := TronHash(rawTxBytes)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, hash)
-
-	// Test invalid transaction data
-	invalidRawTx := []byte{0x01, 0x02, 0x03}
-	hash, err = TronHash(invalidRawTx)
-	assert.Error(t, err)
-	assert.Empty(t, hash)
 }
