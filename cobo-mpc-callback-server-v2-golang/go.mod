@@ -6,7 +6,9 @@ require (
 	github.com/CoboGlobal/cobo-waas2-go-sdk v1.9.0
 	github.com/deckarep/golang-set/v2 v2.6.0
 	github.com/ethereum/go-ethereum v1.15.2
+	github.com/fbsobreira/gotron-sdk v0.0.0-20230907131216-1e824406fe8c
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang/protobuf v1.5.4
 )
 
 require (

@@ -117,7 +117,6 @@ type KeySignRequestInfo struct {
 	SignerKeyShareHolderGroup *coboWaaS2.KeyShareHolderGroup `json:"signer_key_share_holder_group,omitempty"`
 	SourceAddresses           []*coboWaaS2.AddressInfo       `json:"source_addresses,omitempty"`
 	Transaction               *coboWaaS2.Transaction         `json:"transaction,omitempty"`
-	StakingActivity           *coboWaaS2.Activity            `json:"staking_activity,omitempty"`
 }
 
 func (r *KeySignRequestInfo) String() string {

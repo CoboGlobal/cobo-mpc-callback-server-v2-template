@@ -25,7 +25,6 @@ func (v *TssVerifier) verifySign(detail *types.KeySignDetail, requestInfo *types
 	tx, err := token.BuildTransaction(&token_adapter.TransactionInfo{
 		SourceAddresses: requestInfo.SourceAddresses,
 		Transaction:     requestInfo.Transaction,
-		StakingActivity: requestInfo.StakingActivity,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to build transaction: %w", err)

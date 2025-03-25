@@ -54,8 +54,8 @@ func TestEthBaseTransaction_GetHashes(t *testing.T) {
 			tx, err := ParseEthTransaction(rawTxBytes)
 			assert.NoError(t, err, "Failed to parse transaction")
 
-			transaction := &EthBaseTransaction{
-				token: &EthBaseToken{
+			transaction := &Transaction{
+				token: &Token{
 					tokenID:    "TEST",
 					erc20Token: tt.isErc20,
 				},
@@ -108,8 +108,8 @@ func TestEthBaseTransaction_GetDestinationAddresses(t *testing.T) {
 			tx, err := ParseEthTransaction(rawTxBytes)
 			assert.NoError(t, err)
 
-			transaction := &EthBaseTransaction{
-				token: &EthBaseToken{
+			transaction := &Transaction{
+				token: &Token{
 					tokenID:    "TEST",
 					erc20Token: tt.isERC20,
 				},

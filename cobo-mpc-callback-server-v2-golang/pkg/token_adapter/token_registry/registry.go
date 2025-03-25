@@ -6,7 +6,7 @@ import (
 )
 
 func InitRegistry() {
-	if err := token_adapter.RegisterTokenCreator("ETH", eth_base.NewEthToken); err != nil {
+	if err := token_adapter.RegisterTokenCreator("ETH", eth_base.NewToken); err != nil {
 		panic(err)
 	}
 

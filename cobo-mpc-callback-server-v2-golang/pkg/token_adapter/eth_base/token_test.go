@@ -9,8 +9,8 @@ import (
 )
 
 func TestNewEthToken(t *testing.T) {
-	token := NewEthToken("ETH")
-	ethToken, ok := token.(*EthBaseToken)
+	token := NewToken("ETH")
+	ethToken, ok := token.(*Token)
 	assert.True(t, ok)
 	assert.Equal(t, "ETH", ethToken.tokenID)
 	assert.False(t, ethToken.erc20Token)
@@ -18,7 +18,7 @@ func TestNewEthToken(t *testing.T) {
 
 func TestNewErc20Token(t *testing.T) {
 	token := NewErc20Token("ETH_USDT")
-	erc20Token, ok := token.(*EthBaseToken)
+	erc20Token, ok := token.(*Token)
 	assert.True(t, ok)
 	assert.Equal(t, "ETH_USDT", erc20Token.tokenID)
 	assert.True(t, erc20Token.erc20Token)
@@ -81,7 +81,7 @@ func TestEthBaseToken_BuildTransaction(t *testing.T) {
 		},
 	}
 
-	token := NewEthToken("ETH")
+	token := NewToken("ETH")
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tx, err := token.BuildTransaction(tt.txInfo)
