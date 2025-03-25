@@ -1,4 +1,4 @@
-package eth_base
+package tron
 
 import (
 	"fmt"
@@ -9,20 +9,20 @@ import (
 
 type Token struct {
 	tokenID    string
-	erc20Token bool
+	trc20Token bool
 }
 
 func NewToken(tokenID string) token_adapter.Token {
 	return &Token{
 		tokenID:    tokenID,
-		erc20Token: false,
+		trc20Token: false,
 	}
 }
 
-func NewErc20Token(tokenID string) token_adapter.Token {
+func NewTrc20Token(tokenID string) token_adapter.Token {
 	return &Token{
 		tokenID:    tokenID,
-		erc20Token: true,
+		trc20Token: true,
 	}
 }
 
@@ -32,9 +32,9 @@ func (t *Token) BuildTransaction(txInfo *token_adapter.TransactionInfo) (token_a
 		return nil, fmt.Errorf("prepare build transaction data error: %w", err)
 	}
 
-	tx, err := ParseEthTransaction(preTxData.rawTx)
+	tx, err := ParseTronTransaction(preTxData.rawTx)
 	if err != nil {
-		return nil, fmt.Errorf("prepare eth transaction error: %w", err)
+		return nil, fmt.Errorf("prepare tron transaction error: %w", err)
 	}
 
 	return &Transaction{tx: tx, PrepareTransactionData: preTxData, token: t}, nil

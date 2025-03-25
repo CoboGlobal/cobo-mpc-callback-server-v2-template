@@ -17,8 +17,8 @@ var hashPool = sync.Pool{
 	New: func() interface{} { return sha3.NewLegacyKeccak256() },
 }
 
-type EthBaseTransaction struct {
-	token *EthBaseToken
+type Transaction struct {
+	token *Token
 	*PrepareTransactionData
 	tx *types.Transaction
 }
@@ -28,9 +28,9 @@ type PrepareTransactionData struct {
 }
 
 // GetHashes implements Transaction interface for Ethereum
-func (et *EthBaseTransaction) GetHashes() ([]string, error) {
+func (t *Transaction) GetHashes() ([]string, error) {
 	var hashes []string
-	h, err := EthHash(et.rawTx)
+	h, err := EthHash(t.rawTx)
 	if err != nil {
 		return nil, fmt.Errorf("calc eth hash error: %w", err)
 	}
@@ -39,17 +39,17 @@ func (et *EthBaseTransaction) GetHashes() ([]string, error) {
 }
 
 // GetDestinationAddresses implements Transaction interface for Ethereum
-func (et *EthBaseTransaction) GetDestinationAddresses() ([]string, error) {
-	if et.tx == nil {
+func (t *Transaction) GetDestinationAddresses() ([]string, error) {
+	if t.tx == nil {
 		return nil, fmt.Errorf("transaction is nil")
 	}
 
 	var addresses []string
 
-	if et.token.erc20Token {
+	if t.token.erc20Token {
 		// parse ERC20 transfer destination addresses
 		// ERC20 transfer method ID: 0xa9059cbb
-		input := et.tx.Data()
+		input := t.tx.Data()
 		if len(input) < 4+32 { // method(4) + address(32)
 			return nil, fmt.Errorf("invalid ERC20 transfer data length")
 		}
@@ -67,7 +67,7 @@ func (et *EthBaseTransaction) GetDestinationAddresses() ([]string, error) {
 
 	} else {
 		// eth transfer
-		if to := et.tx.To(); to != nil {
+		if to := t.tx.To(); to != nil {
 			addresses = append(addresses, to.Hex())
 		} else {
 			return []string{}, nil

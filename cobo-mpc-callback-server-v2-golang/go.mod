@@ -3,10 +3,12 @@ module github.com/CoboGlobal/cobo-mpc-callback-server-v2
 go 1.23.1
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.9.0
+	github.com/CoboGlobal/cobo-waas2-go-sdk v1.11.0
 	github.com/deckarep/golang-set/v2 v2.6.0
 	github.com/ethereum/go-ethereum v1.15.2
+	github.com/fbsobreira/gotron-sdk v0.0.0-20230907131216-1e824406fe8c
 	github.com/gin-gonic/gin v1.10.0
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
@@ -29,6 +31,7 @@ require (
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
+	github.com/shengdoushi/base58 v1.0.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
@@ -78,6 +81,5 @@ require (
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
-	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

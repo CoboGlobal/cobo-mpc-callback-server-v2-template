@@ -20,5 +20,4 @@ type Token interface {
 type TransactionInfo struct {
 	SourceAddresses []*coboWaaS2.AddressInfo
 	Transaction     *coboWaaS2.Transaction
-	StakingActivity *coboWaaS2.Activity
 }
