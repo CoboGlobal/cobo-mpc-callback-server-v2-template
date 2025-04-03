@@ -17,5 +17,4 @@ public class KeySignRequestInfo {
     private KeyShareHolderGroup signerKeyShareHolderGroup;
     private List<AddressInfo> sourceAddresses;
     private Transaction transaction;
-    private Activity stakingActivity;
 }
