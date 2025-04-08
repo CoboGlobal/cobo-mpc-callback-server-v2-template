@@ -59,11 +59,6 @@ public class KeySignRequestInfoDeserializer extends JsonDeserializer<KeySignRequ
                 result.setTransaction(Transaction.fromJson(transactionJson));
             }
 
-            if (node.has("staking_activity") && !node.get("staking_activity").isNull()) {
-                String activityJson = node.get("staking_activity").toString();
-                result.setStakingActivity(Activity.fromJson(activityJson));
-            }
-
         } catch (Exception e) {
             log.error("Error deserializing KeySignRequestInfo", e);
         }

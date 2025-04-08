@@ -372,7 +372,6 @@ class KeySignRequestInfo:
     signer_key_share_holder_group: Optional[cobo_waas2.KeyShareHolderGroup] = None
     source_addresses: Optional[List[cobo_waas2.AddressInfo]] = None
     transaction: Optional[cobo_waas2.Transaction] = None
-    staking_activity: Optional[cobo_waas2.Activity] = None
 
     @classmethod
     def from_json(cls, json_str: str):
@@ -433,11 +432,6 @@ class KeySignRequestInfo:
                 if data.get("transaction")
                 else None
             )
-            staking_activity = (
-                cobo_waas2.Activity.from_json(json.dumps(data.get("staking_activity")))
-                if data.get("staking_activity")
-                else None
-            )
 
             return cls(
                 org=org,
@@ -447,7 +441,6 @@ class KeySignRequestInfo:
                 signer_key_share_holder_group=holder_group,
                 source_addresses=source_addresses,
                 transaction=transaction,
-                staking_activity=staking_activity,
             )
 
         except json.JSONDecodeError:
@@ -469,9 +462,6 @@ class KeySignRequestInfo:
                 if self.source_addresses
                 else None,
                 "transaction": self.transaction.to_dict() if self.transaction else None,
-                "staking_activity": self.staking_activity.to_dict()
-                if self.staking_activity
-                else None,
             }
         )
 
