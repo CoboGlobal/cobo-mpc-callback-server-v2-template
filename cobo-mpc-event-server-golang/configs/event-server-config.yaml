@@ -1,0 +1,5 @@
+event_server:
+  service_name: tss-node-event-server
+  endpoint: 0.0.0.0:11030
+  client_public_key_path: configs/tss-node-event-pub.key
+  enable_debug: false
