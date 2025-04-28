@@ -123,6 +123,7 @@ func (s *Service) RiskControl(c *gin.Context) {
 }
 
 func (s *Service) Process(rawRequest []byte) (*coboWaaS2.TSSCallbackResponse, error) {
+	//log.Debugf("Callback process request: %v", string(rawRequest))
 	if s.handler == nil {
 		log.Errorf("callback service no handler registered")
 		return nil, fmt.Errorf("callback service no handler registered")
@@ -216,10 +217,12 @@ func (s *Service) SendResponse(c *gin.Context, rsp *coboWaaS2.TSSCallbackRespons
 		c.Abort()
 		return
 	}
+
+	rspJSON, _ := rsp.MarshalJSON()
 	if *rsp.Status == types.StatusOK {
-		log.WithField("request_id", rsp.RequestId).Infof("Callback server http code %v, response: %v", httpStatusCode, rsp)
+		log.WithField("request_id", rsp.RequestId).Infof("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
 	} else {
-		log.WithField("request_id", rsp.RequestId).Errorf("Callback server http code %v, response: %v", httpStatusCode, rsp)
+		log.WithField("request_id", rsp.RequestId).Errorf("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
 	}
 
 	data, err := rsp.MarshalJSON()

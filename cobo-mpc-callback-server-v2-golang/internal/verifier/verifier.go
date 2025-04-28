@@ -59,7 +59,9 @@ func (v *TssVerifier) handleKeyGen(requestDetail, extraInfo string) error {
 		return fmt.Errorf("failed to parse key gen extra: %w", err)
 	}
 
-	log.Debugf("key gen detail:\n%v\n extra:\n%v", detail, extra)
+	detailJSON, _ := detail.MarshalJSON()
+	extraJSON, _ := extra.MarshalJSON()
+	log.Debugf("key gen detail:\n%v\n extra:\n%v", string(detailJSON), string(extraJSON))
 
 	// key gen logic add here
 
@@ -81,7 +83,9 @@ func (v *TssVerifier) handleKeySign(requestDetail, extraInfo string) error {
 		return fmt.Errorf("failed to parse key sign extra: %w", err)
 	}
 
-	log.Debugf("key sign detail:\n%v\n extra:\n%v", detail, extra)
+	detailJSON, _ := detail.MarshalJSON()
+	extraJSON, _ := extra.MarshalJSON()
+	log.Debugf("key sign detail:\n%v\n extra:\n%v", string(detailJSON), string(extraJSON))
 
 	// key sign logic add here
 
@@ -108,7 +112,9 @@ func (v *TssVerifier) handleKeyReshare(requestDetail, extraInfo string) error {
 		return fmt.Errorf("failed to parse key reshare extra: %w", err)
 	}
 
-	log.Debugf("key reshare detail:\n%v\n extra:\n%v", detail, extra)
+	detailJSON, _ := detail.MarshalJSON()
+	extraJSON, _ := extra.MarshalJSON()
+	log.Debugf("key reshare detail:\n%v\n extra:\n%v", string(detailJSON), string(extraJSON))
 
 	// key reshare logic add here
 

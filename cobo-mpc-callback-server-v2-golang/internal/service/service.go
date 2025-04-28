@@ -8,6 +8,7 @@ import (
 	netService "github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/netservice"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/types"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/verifier"
+	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/log"
 	coboWaaS2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
@@ -46,6 +47,8 @@ func (s *Service) HandleRequest(rawRequest []byte) (*coboWaaS2.TSSCallbackRespon
 		}, nil
 	}
 
+	//reqJSON, _ := req.MarshalJSON()
+	//log.Debugf("Callback request: %v", string(reqJSON))
 	if err := s.vfr.Verify(req); err != nil {
 		status := int32(types.StatusInternalError)
 		errStr := fmt.Sprintf("reject sign request: %v", err)
