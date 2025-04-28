@@ -220,14 +220,14 @@ func (s *Service) SendResponse(c *gin.Context, rsp *coboWaaS2.TSSCallbackRespons
 
 	rspJSON, _ := rsp.MarshalJSON()
 	if *rsp.Status == types.StatusOK {
-		log.WithField("request_id", rsp.RequestId).Infof("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
+		log.WithField("request_id", *rsp.RequestId).Infof("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
 	} else {
-		log.WithField("request_id", rsp.RequestId).Errorf("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
+		log.WithField("request_id", *rsp.RequestId).Errorf("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
 	}
 
 	data, err := rsp.MarshalJSON()
 	if err != nil {
-		log.WithField("request_id", rsp.RequestId).Errorf("callback server response marshal error: %v", err)
+		log.WithField("request_id", *rsp.RequestId).Errorf("callback server response marshal error: %v", err)
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.Abort()
 		return
@@ -235,7 +235,7 @@ func (s *Service) SendResponse(c *gin.Context, rsp *coboWaaS2.TSSCallbackRespons
 
 	token, err := s.CreateToken(data)
 	if err != nil {
-		log.WithField("request_id", rsp.RequestId).Errorf("callback server response create token error: %v", err)
+		log.WithField("request_id", *rsp.RequestId).Errorf("callback server response create token error: %v", err)
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.Abort()
 		return
