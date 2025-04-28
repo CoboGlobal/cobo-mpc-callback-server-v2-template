@@ -38,12 +38,12 @@ type testCase struct {
 }
 
 var (
-	rsp                  coboWaaS2.TSSCallbackResponse
-	errRsp               error
-	actionApprove        = coboWaaS2.TSSCALLBACKACTIONTYPE_APPROVE
-	actionReject         = coboWaaS2.TSSCALLBACKACTIONTYPE_REJECT
-	statusOK             = int32(types.StatusOK)
-	statusInternalError  = int32(types.StatusInternalError)
+	rsp                 coboWaaS2.TSSCallbackResponse
+	errRsp              error
+	actionApprove       = coboWaaS2.TSSCALLBACKACTIONTYPE_APPROVE
+	actionReject        = coboWaaS2.TSSCALLBACKACTIONTYPE_REJECT
+	statusOK            = int32(types.StatusOK)
+	statusInternalError = int32(types.StatusInternalError)
 )
 
 var testCases = []testCase{
