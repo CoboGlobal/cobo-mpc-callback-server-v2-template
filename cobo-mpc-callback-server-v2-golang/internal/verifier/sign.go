@@ -2,29 +2,30 @@ package verifier
 
 import (
 	"fmt"
-	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/types"
+
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/token_adapter"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/utils"
+	coboWaaS2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
-func (v *TssVerifier) verifySign(detail *types.KeySignDetail, requestInfo *types.KeySignRequestInfo) error {
-	if detail == nil || requestInfo == nil {
+func (v *TssVerifier) verifySign(detail *coboWaaS2.TSSKeySignRequest, extra *coboWaaS2.TSSKeySignExtra) error {
+	if detail == nil || extra == nil {
 		return fmt.Errorf("detail or request info is nil")
 	}
-	if requestInfo.Transaction == nil || requestInfo.Transaction.TokenId == nil {
+	if extra.Transaction == nil || extra.Transaction.TokenId == nil {
 		return fmt.Errorf("transaction or token id is nil")
 	}
 
 	// get token
-	tokenID := *requestInfo.Transaction.TokenId
+	tokenID := *extra.Transaction.TokenId
 	token, err := token_adapter.NewToken(tokenID)
 	if err != nil {
 		return fmt.Errorf("failed to get token: %w", err)
 	}
 
 	tx, err := token.BuildTransaction(&token_adapter.TransactionInfo{
-		SourceAddresses: requestInfo.SourceAddresses,
-		Transaction:     requestInfo.Transaction,
+		SourceAddresses: extra.SourceAddresses,
+		Transaction:     extra.Transaction,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to build transaction: %w", err)

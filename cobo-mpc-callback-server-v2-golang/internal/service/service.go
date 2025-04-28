@@ -8,11 +8,12 @@ import (
 	netService "github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/netservice"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/types"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/verifier"
+	coboWaaS2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
 type CallbackService interface {
 	Start()
-	HandleRequest(rawRequest []byte) (*types.Response, error)
+	HandleRequest(rawRequest []byte) (*coboWaaS2.TSSCallbackResponse, error)
 }
 
 type Service struct {
@@ -33,27 +34,33 @@ func (s *Service) Start() {
 	s.callbackSrv.Start()
 }
 
-func (s *Service) HandleRequest(rawRequest []byte) (*types.Response, error) {
-	req := &types.Request{}
+func (s *Service) HandleRequest(rawRequest []byte) (*coboWaaS2.TSSCallbackResponse, error) {
+	req := &coboWaaS2.TSSCallbackRequest{}
 	if err := json.Unmarshal(rawRequest, req); err != nil {
-		return &types.Response{
-			Status:    types.StatusInternalError,
-			ErrStr:    fmt.Sprintf("failed to parse raw request %v", err.Error()),
-			RequestID: req.RequestID,
+		status := int32(types.StatusInternalError)
+		errStr := fmt.Sprintf("failed to parse raw request %v", err.Error())
+		return &coboWaaS2.TSSCallbackResponse{
+			Status:    &status,
+			Error:     &errStr,
+			RequestId: req.RequestId,
 		}, nil
 	}
 
 	if err := s.vfr.Verify(req); err != nil {
-		return &types.Response{
-			Status:    types.StatusInternalError,
-			ErrStr:    fmt.Sprintf("reject sign request: %v", err),
-			RequestID: req.RequestID,
+		status := int32(types.StatusInternalError)
+		errStr := fmt.Sprintf("reject sign request: %v", err)
+		return &coboWaaS2.TSSCallbackResponse{
+			Status:    &status,
+			Error:     &errStr,
+			RequestId: req.RequestId,
 		}, err
 	}
 
-	return &types.Response{
-		Action:    types.ActionApprove,
-		Status:    types.StatusOK,
-		RequestID: req.RequestID,
+	status := int32(types.StatusOK)
+	action := coboWaaS2.TSSCALLBACKACTIONTYPE_APPROVE
+	return &coboWaaS2.TSSCallbackResponse{
+		Action:    &action,
+		Status:    &status,
+		RequestId: req.RequestId,
 	}, nil
 }
