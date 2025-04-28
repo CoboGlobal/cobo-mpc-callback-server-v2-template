@@ -8,7 +8,6 @@ import (
 	netService "github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/netservice"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/types"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/verifier"
-	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/log"
 	coboWaaS2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
