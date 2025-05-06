@@ -1,0 +1,39 @@
+{
+  "_theme": "mfa",
+  "_biz_version": "{{ template_version }}",
+  "base_info": {
+    "title": "Please confirm if this action was initiated by you",
+    "title_icon": "https://d.cobo.com/public/documents/statement_mfa.png",
+    "initiator_icon": "https://d.cobo.com/public/documents/statement_mfa.png",
+    "initiator": "{{ initiator }}",
+    "action": "{{ operation_name }}",
+    "org_name": "{{ org_name }}",
+    "environment": "{{ environment }}",
+    "created_time": "{{ created_time }}",
+    {% if expired_time %}
+    "expired_time": "{{ expired_time }}",
+    {% endif %}
+    "statement_uuid": "{{ statement_uuid }}"
+  },
+  "extensible_info": {
+    "components": [
+      {
+        "_component_type": "text_with_popup",
+        "key": "Policy Priority",
+        "value": "{{ policy_priority }}",
+        "popup": {
+          "_popup_type": "table",
+          "title": "Policy Priority",
+          "sub_title": "{{ policy_priority }}",
+          "table": {
+            "columns": [
+              "Policy Name",
+              "Priority"
+            ],
+            "values": {{ policies | tojson }}
+          }
+        }
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@ toolchain go1.24.2
 
 require (
 	github.com/CoboGlobal/cobo-waas2-go-sdk v1.14.0
+	github.com/google/uuid v1.6.0
 	github.com/kluctl/kluctl/lib v0.0.0-20250423013206-79401cdbbbd6
 	github.com/test-go/testify v1.1.4
 )
@@ -20,7 +21,6 @@ require (
 	github.com/go-git/go-git/v5 v5.16.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gofrs/flock v0.12.1 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
