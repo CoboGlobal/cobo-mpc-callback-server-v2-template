@@ -1,4 +1,4 @@
-package com.cobo.callback.config;
+package com.cobo.event.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,13 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @NoArgsConstructor
 public class AppConfig {
-    private static final String DEFAULT_CONFIG_YAML = "configs/callback-server-config.yaml";
+    private static final String DEFAULT_CONFIG_YAML = "configs/event-server-config.yaml";
 
-    private String serviceName = "callback-server";
-    private String endpoint = "0.0.0.0:11020";
+    private String serviceName = "event-server";
+    private String endpoint = "0.0.0.0:11030";
     private int tokenExpireMinutes = 2;
-    private String clientPublicKeyPath = "configs/tss-node-callback-pub.key";
-    private String servicePrivateKeyPath = "configs/callback-server-pri.pem";
+    private String clientPublicKeyPath = "configs/tss-node-event-pub.key";
     private boolean enableDebug = false;
 
     public static AppConfig loadConfig(String[] args) {
@@ -48,10 +47,10 @@ public class AppConfig {
 
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             JsonNode root = mapper.readTree(configFile);
-            JsonNode server = root.get("callback_server");
+            JsonNode server = root.get("event_server");
 
             if (server == null) {
-                log.warn("No 'callback_server' section found in {}, using default configuration", configPath);
+                log.warn("No 'event_server' section found in {}, using default configuration", configPath);
                 return new AppConfig();
             }
 
@@ -64,8 +63,6 @@ public class AppConfig {
                     server.get("token_expire_minutes").asInt() : config.getTokenExpireMinutes());
             config.setClientPublicKeyPath(server.has("client_public_key_path") ?
                     server.get("client_public_key_path").asText() : config.getClientPublicKeyPath());
-            config.setServicePrivateKeyPath(server.has("service_private_key_path") ?
-                    server.get("service_private_key_path").asText() : config.getServicePrivateKeyPath());
             config.setEnableDebug(server.has("enable_debug") ?
                     server.get("enable_debug").asBoolean() : config.isEnableDebug());
 

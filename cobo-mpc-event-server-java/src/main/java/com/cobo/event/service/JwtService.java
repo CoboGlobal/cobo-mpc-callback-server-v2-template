@@ -1,4 +1,4 @@
-package com.cobo.callback.service;
+package com.cobo.event.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
 
-import com.cobo.callback.config.AppConfig;
+import com.cobo.event.config.AppConfig;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -26,44 +26,18 @@ public class JwtService {
     private static final String PACKAGE_DATA_CLAIM = "package_data";
     private static final String BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----";
     private static final String END_PUBLIC_KEY = "-----END PUBLIC KEY-----";
-    private static final String BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----";
-    private static final String END_PRIVATE_KEY = "-----END PRIVATE KEY-----";
 
     private final AppConfig config;
     private final PublicKey clientPublicKey;
-    private final PrivateKey servicePrivateKey;
 
     public JwtService(AppConfig config) {
         this.config = config;
         try {
             this.clientPublicKey = loadPublicKey(config.getClientPublicKeyPath());
-            this.servicePrivateKey = loadPrivateKey(config.getServicePrivateKeyPath());
             log.info("Successfully loaded JWT keys");
         } catch (Exception e) {
             log.error("Failed to load JWT keys", e);
             throw new RuntimeException("Failed to initialize JWT service", e);
-        }
-    }
-
-    public String createToken(String data) {
-        if (data == null || data.isEmpty()) {
-            throw new IllegalArgumentException("Token data cannot be null or empty");
-        }
-
-        try {
-            Date now = new Date();
-            Date expiration = new Date(now.getTime() + (config.getTokenExpireMinutes() * 60 * 1000L));
-
-            return Jwts.builder()
-                    .expiration(expiration)
-                    .issuer(config.getServiceName())
-                    .claim(PACKAGE_DATA_CLAIM, Base64.getEncoder().encodeToString(data.getBytes()))
-                    .signWith(servicePrivateKey, Jwts.SIG.RS256)
-                    .compact();
-
-        } catch (Exception e) {
-            log.error("Failed to create token", e);
-            throw new JwtException("Failed to create token: " + e.getMessage());
         }
     }
 
@@ -108,23 +82,6 @@ public class JwtService {
         } catch (InvalidKeySpecException e) {
             log.error("Invalid public key format", e);
             throw new IllegalArgumentException("Invalid public key format", e);
-        }
-    }
-
-    public PrivateKey loadPrivateKey(String path) throws Exception {
-        byte[] keyBytes = readKeyFile(path);
-        try {
-            String keyContent = new String(keyBytes)
-                    .replace(BEGIN_PRIVATE_KEY, "")
-                    .replace(END_PRIVATE_KEY, "")
-                    .replaceAll("\\s", "");
-
-            byte[] decoded = Base64.getDecoder().decode(keyContent);
-            KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decoded));
-        } catch (InvalidKeySpecException e) {
-            log.error("Invalid private key format", e);
-            throw new IllegalArgumentException("Invalid private key format", e);
         }
     }
 

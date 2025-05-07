@@ -1,14 +1,10 @@
-package com.cobo.callback;
+package com.cobo.event;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.cobo.callback.config.AppConfig;
-import com.cobo.callback.model.Request;
-import com.cobo.callback.model.Response;
-import com.cobo.callback.service.JwtService;
-import com.cobo.callback.verify.TssVerifier;
-import com.cobo.callback.verify.Verifier;
+import com.cobo.event.config.AppConfig;
+import com.cobo.event.service.JwtService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -34,7 +30,6 @@ public class Application {
 
     private static JwtService jwtService;
     private static AppConfig appConfig;
-    private static final Verifier verifier = TssVerifier.create();
 
     @GET(value = "/ping", responseType = ResponseType.JSON)
     public Map<String, String> ping() {
@@ -44,57 +39,29 @@ public class Application {
         return response;
     }
 
-    @POST(value = "/v2/check", responseType = ResponseType.TEXT)
-    public String riskControl(@Form String TSS_JWT_MSG) {
+    @POST(value = "/v2/event", responseType = ResponseType.EMPTY)
+    public void event(@Form String TSS_JWT_MSG) {
         try {
             if (TSS_JWT_MSG.isEmpty()) {
                 throw new IllegalArgumentException("Missing TSS_JWT_MSG parameter");
             }
 
-            String requestData = jwtService.verifyToken(TSS_JWT_MSG);
-            Request request = MAPPER.readValue(requestData, Request.class);
-
-            Response response = processRequest(request);
-            String responseJson = MAPPER.writeValueAsString(response);
-            return jwtService.createToken(responseJson);
-
+            String eventData = jwtService.verifyToken(TSS_JWT_MSG);
+            processEvent(eventData);
         } catch (JwtException e) {
-            return handleError(Response.STATUS_INVALID_TOKEN, e.getMessage());
+            handleError(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to process request", e);
-            return handleError(Response.STATUS_INTERNAL_ERROR, e.getMessage());
+            log.error("Failed to process event", e);
+            handleError(e.getMessage());
         }
     }
 
-    private String handleError(int status, String message) {
-        try {
-            Response response = Response.builder()
-                    .status(status)
-                    .errStr(message)
-                    .build();
-            return jwtService.createToken(MAPPER.writeValueAsString(response));
-        } catch (Exception ex) {
-            log.error("Error handling error response", ex);
-            throw new RuntimeException(ex);
-        }
+    private void handleError(String message) {
+        log.error("Error: {}", message);
     }
 
-    private static Response processRequest(Request request) {
-        String error = verifier.verify(request);
-        if (error != null) {
-            return Response.builder()
-                    .status(Response.STATUS_INVALID_REQUEST)
-                    .requestId(request.getRequestId())
-                    .action(Response.ACTION_REJECT)
-                    .errStr(error)
-                    .build();
-        }
-
-        return Response.builder()
-                .status(Response.STATUS_OK)
-                .requestId(request.getRequestId())
-                .action(Response.ACTION_APPROVE)
-                .build();
+    private static void processEvent(String event) {
+        log.info("Processing event: {}", event);
     }
 
     public static void main(String[] args) {
