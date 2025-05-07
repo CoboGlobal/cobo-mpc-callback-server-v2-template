@@ -49,7 +49,7 @@ public class Application {
 
             String eventData = jwtService.verifyToken(TSS_JWT_MSG);
             processEvent(eventData);
-            
+
             // Set HTTP 200 for successful processing
             WebContext.response().status(200);
         } catch (JwtException e) {
