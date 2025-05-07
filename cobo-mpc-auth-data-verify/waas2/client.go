@@ -9,22 +9,20 @@ import (
 	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
 )
 
-const API_SECRET = "03b858bcfc7b62b5bd6569e6e68ce466626ff785b5694e068f27b56cc743dd95"
-
 type Client struct {
 	env    int
 	signer crypto.ApiSigner
 	client *coboWaas2.APIClient
 }
 
-func NewClient() *Client {
+func NewClient(apiSecret string) *Client {
 	configuration := coboWaas2.NewConfiguration()
 	client := coboWaas2.NewAPIClient(configuration)
 
 	return &Client{
 		env: coboWaas2.DevEnv,
 		signer: crypto.Ed25519Signer{
-			Secret: API_SECRET,
+			Secret: apiSecret,
 		},
 		client: client,
 	}

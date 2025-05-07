@@ -1,4 +1,4 @@
-package verifier
+package validator
 
 import (
 	"fmt"
@@ -38,14 +38,12 @@ func TestBuildStatementV2(t *testing.T) {
 	templateContent, err := getTemplateContent(bizKey, version)
 	assert.NoError(t, err)
 
-	s := NewStatement(templateContent, version)
-	message, titleMap, bodyMap, filledData, err := s.BuildStatementV2(bizKey, data, 30)
+	s := NewStatement(templateContent)
+	message, err := s.BuildStatementV2(data)
 	assert.NoError(t, err)
+	fmt.Printf("Data:\n %s\n", data)
+	fmt.Printf("Message:\n %s\n", message)
 
-	fmt.Printf("Message: %s\n", message)
-	fmt.Printf("Title Map: %v\n", titleMap)
-	fmt.Printf("Body Map: %v\n", bodyMap)
-	fmt.Printf("Filled Data: %v\n", filledData)
 }
 
 func getBizData(bizKey string) (string, error) {

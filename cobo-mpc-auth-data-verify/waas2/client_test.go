@@ -10,8 +10,10 @@ import (
 	"github.com/test-go/testify/assert"
 )
 
+const testApiSecret = "03b858bcfc7b62b5bd6569e6e68ce466626ff785b5694e068f27b56cc743dd95"
+
 func TestGetTransactionApprovalDetail(t *testing.T) {
-	client := NewClient()
+	client := NewClient(testApiSecret)
 	detail, err := client.GetTransactionApprovalDetail(context.Background(), "383d10e7-8d3f-40c6-abec-e4ac36a2a998")
 	if err != nil {
 		t.Fatalf("failed to get transaction approval detail: %v", err)
