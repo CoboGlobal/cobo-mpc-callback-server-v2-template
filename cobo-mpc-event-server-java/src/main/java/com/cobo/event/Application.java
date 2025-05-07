@@ -14,6 +14,7 @@ import com.hellokaton.blade.annotation.request.Form;
 import com.hellokaton.blade.annotation.route.GET;
 import com.hellokaton.blade.annotation.route.POST;
 import com.hellokaton.blade.mvc.ui.ResponseType;
+import com.hellokaton.blade.mvc.WebContext;
 
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -48,20 +49,21 @@ public class Application {
 
             String eventData = jwtService.verifyToken(TSS_JWT_MSG);
             processEvent(eventData);
+            
+            // Set HTTP 200 for successful processing
+            WebContext.response().status(200);
         } catch (JwtException e) {
-            handleError(e.getMessage());
+            log.error("JWT verification failed: {}", e.getMessage());
+            WebContext.response().status(400);
         } catch (Exception e) {
-            log.error("Failed to process event", e);
-            handleError(e.getMessage());
+            log.error("Failed to process event: {}", e.getMessage());
+            WebContext.response().status(400);
         }
-    }
-
-    private void handleError(String message) {
-        log.error("Error: {}", message);
     }
 
     private static void processEvent(String event) {
         log.info("Processing event: {}", event);
+        // Add your event processing logic here
     }
 
     public static void main(String[] args) {
