@@ -175,7 +175,7 @@ func (s *Service) jwtAuthMiddleware() func(c *gin.Context) {
 		err := s.TokenValid(c)
 		if err != nil {
 			log.Errorf("event server jwt auth middleware error: %v", err)
-			s.SendResponse(c, http.StatusOK)
+			s.SendResponse(c, http.StatusBadRequest)
 			return
 		}
 		c.Next()
