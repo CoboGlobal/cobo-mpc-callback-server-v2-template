@@ -8,12 +8,12 @@ import (
 )
 
 type Statement struct {
-	templateContent string
+	template string
 }
 
-func NewStatement(templateContent string) *Statement {
+func NewStatement(template string) *Statement {
 	return &Statement{
-		templateContent: templateContent,
+		template: template,
 	}
 }
 
@@ -32,7 +32,7 @@ func (s *Statement) BuildStatementV2(bizData string) (string, error) {
 	}
 	defer j2.Close()
 
-	message, err := j2.RenderString(s.templateContent)
+	message, err := j2.RenderString(s.template)
 	if err != nil {
 		return "", fmt.Errorf("error rendering template: %w", err)
 	}
