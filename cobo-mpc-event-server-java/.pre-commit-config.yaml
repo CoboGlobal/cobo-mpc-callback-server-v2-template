@@ -1,0 +1,26 @@
+repos:
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
+      hooks:
+        -   id: trailing-whitespace
+            description: Removes trailing whitespace
+        -   id: end-of-file-fixer
+            description: Ensures files end with a newline
+        -   id: check-merge-conflict
+            description: Checks for merge conflict strings
+        -   id: mixed-line-ending
+            description: Ensures mixed line endings are consistent
+        -   id: check-case-conflict
+            description: Checks for files with names that would conflict on case-insensitive filesystems
+        -   id: check-yaml
+            description: Checks yaml files for parseable syntax
+
+  -   repo: local
+      hooks:
+        -   id: maven-test
+            name: Running unit tests
+            entry: mvn test -B
+            language: system
+            pass_filenames: false
+            types: [java]
+            stages: [commit]
