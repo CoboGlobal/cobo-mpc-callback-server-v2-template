@@ -27,19 +27,12 @@ type AuthData struct {
 }
 
 type AuthValidator struct {
-	authData AuthData
+	authData *AuthData
 }
 
-func NewAuthValidator(result int, pubkey string, signature string, algorithm string, template string, bizData string) *AuthValidator {
+func NewAuthValidator(authData *AuthData) *AuthValidator {
 	return &AuthValidator{
-		authData: AuthData{
-			Result:    result,
-			Pubkey:    pubkey,
-			Signature: signature,
-			Algorithm: algorithm,
-			Template:  template,
-			BizData:   bizData,
-		},
+		authData: authData,
 	}
 }
 
