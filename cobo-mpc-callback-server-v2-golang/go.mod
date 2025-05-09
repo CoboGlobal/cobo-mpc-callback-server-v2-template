@@ -1,4 +1,4 @@
-module github.com/ZhaoZheCobo/cobo-mpc-callback-server-v2
+module github.com/CoboGlobal/cobo-mpc-callback-server-v2
 
 go 1.23.1
 
