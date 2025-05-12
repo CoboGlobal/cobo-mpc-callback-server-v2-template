@@ -28,14 +28,14 @@ func (v *TssVerifier) Verify(request *coboWaaS2.TSSCallbackRequest) error {
 	}
 
 	switch *request.RequestType {
-	case coboWaaS2.TSSCALLBACKREQUESTTYPE__0:
+	case coboWaaS2.TSSCALLBACKREQUESTTYPE_PING:
 		log.Debugf("Got ping request")
 		return nil
-	case coboWaaS2.TSSCALLBACKREQUESTTYPE__1:
+	case coboWaaS2.TSSCALLBACKREQUESTTYPE_KEYGEN:
 		return v.handleKeyGen(*request.RequestDetail, *request.ExtraInfo)
-	case coboWaaS2.TSSCALLBACKREQUESTTYPE__2:
+	case coboWaaS2.TSSCALLBACKREQUESTTYPE_KEYSIGN:
 		return v.handleKeySign(*request.RequestDetail, *request.ExtraInfo)
-	case coboWaaS2.TSSCALLBACKREQUESTTYPE__3:
+	case coboWaaS2.TSSCALLBACKREQUESTTYPE_KEYRESHARE:
 		return v.handleKeyReshare(*request.RequestDetail, *request.ExtraInfo)
 
 	default:
