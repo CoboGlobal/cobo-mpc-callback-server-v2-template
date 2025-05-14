@@ -3,15 +3,11 @@ package com.cobo.callback;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cobo.waas2.model.*;
 import com.cobo.callback.config.AppConfig;
-import com.cobo.callback.model.Request;
-import com.cobo.callback.model.Response;
 import com.cobo.callback.service.JwtService;
 import com.cobo.callback.verify.TssVerifier;
 import com.cobo.callback.verify.Verifier;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.hellokaton.blade.Blade;
 import com.hellokaton.blade.annotation.*;
 import com.hellokaton.blade.annotation.request.Form;
@@ -25,12 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Path
 public class Application {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false)
-            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
-            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+    public static final int STATUS_OK = 0;
+    public static final int STATUS_INVALID_REQUEST = 10;
+    public static final int STATUS_INVALID_TOKEN = 20;
+    public static final int STATUS_INTERNAL_ERROR = 30;
 
     private static JwtService jwtService;
     private static AppConfig appConfig;
@@ -52,49 +46,48 @@ public class Application {
             }
 
             String requestData = jwtService.verifyToken(TSS_JWT_MSG);
-            Request request = MAPPER.readValue(requestData, Request.class);
+            TSSCallbackRequest request = TSSCallbackRequest.fromJson(requestData);
 
-            Response response = processRequest(request);
-            String responseJson = MAPPER.writeValueAsString(response);
+            TSSCallbackResponse response = processRequest(request);
+            String responseJson = response.toJson();
             return jwtService.createToken(responseJson);
 
         } catch (JwtException e) {
-            return handleError(Response.STATUS_INVALID_TOKEN, e.getMessage());
+            return handleError(STATUS_INVALID_TOKEN, e.getMessage());
         } catch (Exception e) {
             log.error("Failed to process request", e);
-            return handleError(Response.STATUS_INTERNAL_ERROR, e.getMessage());
+            return handleError(STATUS_INTERNAL_ERROR, e.getMessage());
         }
     }
 
     private String handleError(int status, String message) {
         try {
-            Response response = Response.builder()
-                    .status(status)
-                    .errStr(message)
-                    .build();
-            return jwtService.createToken(MAPPER.writeValueAsString(response));
+            TSSCallbackResponse response = new TSSCallbackResponse();
+            response.setStatus(status);
+            response.setError(message);
+            return jwtService.createToken(response.toJson());
         } catch (Exception ex) {
             log.error("Error handling error response", ex);
             throw new RuntimeException(ex);
         }
     }
 
-    private static Response processRequest(Request request) {
+    private static TSSCallbackResponse processRequest(TSSCallbackRequest request) {
         String error = verifier.verify(request);
         if (error != null) {
-            return Response.builder()
-                    .status(Response.STATUS_INVALID_REQUEST)
-                    .requestId(request.getRequestId())
-                    .action(Response.ACTION_REJECT)
-                    .errStr(error)
-                    .build();
+            TSSCallbackResponse response = new TSSCallbackResponse();
+            response.setStatus(STATUS_INVALID_REQUEST);
+            response.setRequestId(request.getRequestId());
+            response.setAction(TSSCallbackActionType.REJECT);
+            response.setError(error);
+            return response;
         }
 
-        return Response.builder()
-                .status(Response.STATUS_OK)
-                .requestId(request.getRequestId())
-                .action(Response.ACTION_APPROVE)
-                .build();
+        TSSCallbackResponse response = new TSSCallbackResponse();
+        response.setStatus(STATUS_OK);
+        response.setRequestId(request.getRequestId());
+        response.setAction(TSSCallbackActionType.APPROVE);
+        return response;
     }
 
     public static void main(String[] args) {

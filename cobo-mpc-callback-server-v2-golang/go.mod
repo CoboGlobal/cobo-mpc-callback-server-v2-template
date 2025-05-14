@@ -3,7 +3,7 @@ module github.com/CoboGlobal/cobo-mpc-callback-server-v2
 go 1.23.1
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.14.0
+	github.com/CoboGlobal/cobo-waas2-go-sdk v1.15.0
 	github.com/deckarep/golang-set/v2 v2.6.0
 	github.com/ethereum/go-ethereum v1.15.2
 	github.com/fbsobreira/gotron-sdk v0.0.0-20230907131216-1e824406fe8c
@@ -99,5 +99,3 @@ require (
 	golang.org/x/text v0.24.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/CoboGlobal/cobo-waas2-go-sdk => ../../../waas_sdk/waas-sdk-coboglobal/cobo-waas2-sdk-template/build/cobo-waas2-go-sdk
