@@ -13,6 +13,7 @@ import (
 
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/internal/types"
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2/pkg/log"
+	coboWaaS2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -26,7 +27,7 @@ type Config struct {
 	EnableDebug        bool   `mapstructure:"enable_debug"`
 }
 
-type RequestHandler func(rawRequest []byte) (*types.Response, error)
+type RequestHandler func(rawRequest []byte) (*coboWaaS2.TSSCallbackResponse, error)
 
 type Service struct {
 	config            Config
@@ -103,9 +104,11 @@ func (s *Service) Ping(c *gin.Context) {
 func (s *Service) RiskControl(c *gin.Context) {
 	rawRequest, err := s.GetRawRequest(c)
 	if err != nil {
-		rsp := &types.Response{
-			Status: types.StatusInvalidRequest,
-			ErrStr: err.Error(),
+		status := int32(types.StatusInvalidRequest)
+		errStr := err.Error()
+		rsp := &coboWaaS2.TSSCallbackResponse{
+			Status: &status,
+			Error:  &errStr,
 		}
 		s.SendResponse(c, rsp, http.StatusOK)
 		return
@@ -119,7 +122,8 @@ func (s *Service) RiskControl(c *gin.Context) {
 	s.SendResponse(c, rsp, http.StatusOK)
 }
 
-func (s *Service) Process(rawRequest []byte) (*types.Response, error) {
+func (s *Service) Process(rawRequest []byte) (*coboWaaS2.TSSCallbackResponse, error) {
+	//log.Debugf("Callback process request: %v", string(rawRequest))
 	if s.handler == nil {
 		log.Errorf("callback service no handler registered")
 		return nil, fmt.Errorf("callback service no handler registered")
@@ -193,9 +197,11 @@ func (s *Service) jwtAuthMiddleware() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		err := s.TokenValid(c)
 		if err != nil {
-			rsp := &types.Response{
-				Status: types.StatusInvalidToken,
-				ErrStr: err.Error(),
+			status := int32(types.StatusInvalidToken)
+			errStr := err.Error()
+			rsp := &coboWaaS2.TSSCallbackResponse{
+				Status: &status,
+				Error:  &errStr,
 			}
 			s.SendResponse(c, rsp, http.StatusOK)
 			return
@@ -204,22 +210,24 @@ func (s *Service) jwtAuthMiddleware() func(c *gin.Context) {
 	}
 }
 
-func (s *Service) SendResponse(c *gin.Context, rsp *types.Response, httpStatusCode int) {
+func (s *Service) SendResponse(c *gin.Context, rsp *coboWaaS2.TSSCallbackResponse, httpStatusCode int) {
 	if rsp == nil {
 		log.Errorf("callback server response nil")
 		c.JSON(http.StatusInternalServerError, fmt.Errorf("callback server response nil"))
 		c.Abort()
 		return
 	}
-	if rsp.Status == types.StatusOK {
-		log.WithField("request_id", rsp.RequestID).Infof("Callback server http code %v, response: %v", httpStatusCode, rsp.String())
+
+	rspJSON, _ := rsp.MarshalJSON()
+	if *rsp.Status == types.StatusOK {
+		log.WithField("request_id", *rsp.RequestId).Infof("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
 	} else {
-		log.WithField("request_id", rsp.RequestID).Errorf("Callback server http code %v, response: %v", httpStatusCode, rsp.String())
+		log.WithField("request_id", *rsp.RequestId).Errorf("Callback server http code %v, response: %v", httpStatusCode, string(rspJSON))
 	}
 
-	data, err := json.Marshal(rsp)
+	data, err := rsp.MarshalJSON()
 	if err != nil {
-		log.WithField("request_id", rsp.RequestID).Errorf("callback server response marshal error: %v", err)
+		log.WithField("request_id", *rsp.RequestId).Errorf("callback server response marshal error: %v", err)
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.Abort()
 		return
@@ -227,7 +235,7 @@ func (s *Service) SendResponse(c *gin.Context, rsp *types.Response, httpStatusCo
 
 	token, err := s.CreateToken(data)
 	if err != nil {
-		log.WithField("request_id", rsp.RequestID).Errorf("callback server response create token error: %v", err)
+		log.WithField("request_id", *rsp.RequestId).Errorf("callback server response create token error: %v", err)
 		c.JSON(http.StatusInternalServerError, err.Error())
 		c.Abort()
 		return
