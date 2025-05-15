@@ -3,10 +3,6 @@ from typing import Optional
 
 
 # Constants
-class Action:
-    APPROVE = "APPROVE"
-    REJECT = "REJECT"
-
 
 class Status:
     OK = 0
@@ -40,42 +36,3 @@ class PackageDataClaim:
             "sub": self.sub,
         }
         return {k: v for k, v in claims.items() if v is not None}
-
-
-@dataclass
-class Request:
-    """Request structure"""
-
-    request_id: Optional[str] = None
-    request_type: Optional[int] = None
-    request_detail: Optional[str] = None
-    extra_info: Optional[str] = None
-
-    def to_dict(self):
-        return {
-            "request_id": self.request_id,
-            "request_type": self.request_type,
-            "request_detail": self.request_detail,
-            "extra_info": self.extra_info,
-        }
-
-
-@dataclass
-class Response:
-    """Response structure"""
-
-    status: int = Status.OK
-    request_id: Optional[str] = None
-    action: Optional[str] = None  # [APPROVE, REJECT]
-    err_str: Optional[str] = None
-
-    def __str__(self):
-        return f"Status: {self.status}, RequestID: {self.request_id}, Action: {self.action}, ErrStr: {self.err_str}"
-
-    def to_dict(self):
-        return {
-            "status": self.status,
-            "request_id": self.request_id,
-            "action": self.action,
-            "error": self.err_str,
-        }

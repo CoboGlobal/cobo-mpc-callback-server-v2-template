@@ -3,16 +3,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from app.request import (
-    KeyGenDetail,
-    KeyGenRequestInfo,
-    KeyReshareDetail,
-    KeyReshareRequestInfo,
-    KeySignDetail,
-    KeySignRequestInfo,
-    RequestType,
-)
-from app.types import Request
+import cobo_waas2
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -22,7 +13,7 @@ class Verifier(ABC):
     """Abstract base class for verifiers"""
 
     @abstractmethod
-    def verify(self, request: Request) -> Optional[str]:
+    def verify(self, request: cobo_waas2.TSSCallbackRequest) -> Optional[str]:
         pass
 
 
@@ -34,22 +25,22 @@ class TssVerifier(Verifier):
         return cls()
 
     @classmethod
-    def verify(cls, request: Request) -> Optional[str]:
+    def verify(cls, request: cobo_waas2.TSSCallbackRequest) -> Optional[str]:
         """Verify TSS request"""
         if not request:
             return "request is nil"
 
         try:
-            request_type = RequestType(request.request_type)
+            request_type = cobo_waas2.TSSCallbackRequestType(request.request_type)
 
-            if request_type == RequestType.TYPE_PING:
+            if request_type == cobo_waas2.TSSCallbackRequestType.PING:
                 logger.debug("Got ping request")
                 return None
-            elif request_type == RequestType.TYPE_KEY_GEN:
+            elif request_type == cobo_waas2.TSSCallbackRequestType.KEYGEN:
                 return cls.handle_key_gen(request.request_detail, request.extra_info)
-            elif request_type == RequestType.TYPE_KEY_SIGN:
+            elif request_type == cobo_waas2.TSSCallbackRequestType.KEYSIGN:
                 return cls.handle_key_sign(request.request_detail, request.extra_info)
-            elif request_type == RequestType.TYPE_KEY_RESHARE:
+            elif request_type == cobo_waas2.TSSCallbackRequestType.KEYRESHARE:
                 return cls.handle_key_reshare(
                     request.request_detail, request.extra_info
                 )
@@ -69,14 +60,14 @@ class TssVerifier(Verifier):
 
         try:
             logger.debug(
-                f"key gen original detail:\n request detail: {request_detail}\nrequest info:\n{extra_info}"
+                f"key gen original detail:\n request detail: {request_detail}\nextra:\n{extra_info}"
             )
 
-            key_gen_detail = KeyGenDetail.from_json(request_detail)
-            request_info = KeyGenRequestInfo.from_json(extra_info)
+            key_gen_detail = cobo_waas2.TSSKeyGenRequest.from_json(request_detail)
+            extra = cobo_waas2.TSSKeyGenExtra.from_json(extra_info)
 
             logger.debug(
-                f"key gen class detail:\n request detail: {key_gen_detail}\nrequest info:\n{request_info}"
+                f"key gen class detail:\n request detail: {key_gen_detail}\nextra:\n{extra}"
             )
 
             # key gen logic add here
@@ -96,14 +87,14 @@ class TssVerifier(Verifier):
 
         try:
             logger.debug(
-                f"key sign original detail:\n request detail: {request_detail}\nrequest info:\n{extra_info}"
+                f"key sign original detail:\n request detail: {request_detail}\nextra:\n{extra_info}"
             )
 
-            key_sign_detail = KeySignDetail.from_json(request_detail)
-            request_info = KeySignRequestInfo.from_json(extra_info)
+            key_sign_detail = cobo_waas2.TSSKeySignRequest.from_json(request_detail)
+            extra = cobo_waas2.TSSKeySignExtra.from_json(extra_info)
 
             logger.debug(
-                f"key sign class detail:\n{key_sign_detail}\nrequest info:\n{request_info}"
+                f"key sign class detail:\n{key_sign_detail}\nextra:\n{extra}"
             )
 
             # key sign logic add here
@@ -123,14 +114,14 @@ class TssVerifier(Verifier):
 
         try:
             logger.debug(
-                f"key reshare original detail:\n request detail: {request_detail}\nrequest info:\n{extra_info}"
+                f"key reshare original detail:\n request detail: {request_detail}\nextra:\n{extra_info}"
             )
 
-            key_reshare_detail = KeyReshareDetail.from_json(request_detail)
-            request_info = KeyReshareRequestInfo.from_json(extra_info)
+            key_reshare_detail = cobo_waas2.TSSKeyReshareRequest.from_json(request_detail)
+            extra = cobo_waas2.TSSKeyReshareExtra.from_json(extra_info)
 
             logger.debug(
-                f"key reshare class detail:\n{key_reshare_detail}\nrequest info:\n{request_info}"
+                f"key reshare class detail:\n{key_reshare_detail}\nextra:\n{extra}"
             )
 
             # key reshare logic add here

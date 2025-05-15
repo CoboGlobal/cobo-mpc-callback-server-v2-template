@@ -1,7 +1,7 @@
 package com.cobo.callback.verify;
 
-import com.cobo.callback.model.Request;
+import com.cobo.waas2.model.TSSCallbackRequest;
 
 public interface Verifier {
-    String verify(Request request);
+    String verify(TSSCallbackRequest request);
 }
