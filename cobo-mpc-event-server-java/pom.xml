@@ -78,8 +78,7 @@
         <dependency>
             <groupId>com.cobo.waas2</groupId>
             <artifactId>cobo-waas2</artifactId>
-            <version>1.8.1</version>
-            <scope>compile</scope>
+            <version>1.15.0</version>
         </dependency>
 
         <!-- Test -->

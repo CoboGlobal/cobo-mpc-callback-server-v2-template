@@ -31,7 +31,7 @@ func (s *Service) Start() {
 func (s *Service) HandleEvent(rawEvent []byte) error {
 
 	log.Debugf("Get event: %s", string(rawEvent))
-	//
+
 	var event coboWaaS2.TSSEvent
 	err := event.UnmarshalJSON(rawEvent)
 	if err != nil {
@@ -121,6 +121,8 @@ func (s *Service) HandleEvent(rawEvent []byte) error {
 		}
 
 	}
+
+	// Add your event handle logic here
 
 	return nil
 }

@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.4
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.14.0
+	github.com/CoboGlobal/cobo-waas2-go-sdk v1.15.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/sirupsen/logrus v1.9.3
@@ -60,5 +60,3 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/CoboGlobal/cobo-waas2-go-sdk => ../../../waas_sdk/waas-sdk-coboglobal/cobo-waas2-sdk-template/build/cobo-waas2-go-sdk
