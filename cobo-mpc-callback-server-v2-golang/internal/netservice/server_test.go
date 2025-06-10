@@ -44,36 +44,51 @@ var (
 	actionReject        = coboWaaS2.TSSCALLBACKACTIONTYPE_REJECT
 	statusOK            = int32(types.StatusOK)
 	statusInternalError = int32(types.StatusInternalError)
+	requestId           = "test-request-id"
 )
 
 var testCases = []testCase{
 	{
-		name:               "approve",
-		srvR:               coboWaaS2.TSSCallbackResponse{Action: &actionApprove, Status: &statusOK},
+		name: "approve",
+		srvR: coboWaaS2.TSSCallbackResponse{
+			Action:    &actionApprove,
+			Status:    &statusOK,
+			RequestId: &requestId,
+		},
 		srvError:           nil,
 		responseHttpStatus: http.StatusOK,
 		responseAction:     string(actionApprove),
 		responseStatus:     types.StatusOK,
 	},
 	{
-		name:               "bad http status",
-		srvR:               coboWaaS2.TSSCallbackResponse{Status: &statusInternalError},
+		name: "bad http status",
+		srvR: coboWaaS2.TSSCallbackResponse{
+			Status:    &statusInternalError,
+			RequestId: &requestId,
+		},
 		srvError:           fmt.Errorf("test error"),
 		responseHttpStatus: http.StatusBadRequest,
 		responseAction:     "",
 		responseStatus:     types.StatusInternalError,
 	},
 	{
-		name:               "response error",
-		srvR:               coboWaaS2.TSSCallbackResponse{Status: &statusInternalError},
+		name: "response error",
+		srvR: coboWaaS2.TSSCallbackResponse{
+			Status:    &statusInternalError,
+			RequestId: &requestId,
+		},
 		srvError:           nil,
 		responseHttpStatus: http.StatusOK,
 		responseAction:     "",
 		responseStatus:     types.StatusInternalError,
 	},
 	{
-		name:               "response reject",
-		srvR:               coboWaaS2.TSSCallbackResponse{Action: &actionReject, Status: &statusOK},
+		name: "response reject",
+		srvR: coboWaaS2.TSSCallbackResponse{
+			Action:    &actionReject,
+			Status:    &statusOK,
+			RequestId: &requestId,
+		},
 		srvError:           nil,
 		responseHttpStatus: http.StatusOK,
 		responseAction:     string(actionReject),
@@ -134,9 +149,9 @@ func parserResponseJWT(t *testing.T, tokenStr string) *coboWaaS2.TSSCallbackResp
 
 func TestService(t *testing.T) {
 	serverCfg := Config{
-		ServiceName: "",
+		ServiceName: "test-service",
 		Endpoint:    "localhost:9999",
-		EnableDebug: false,
+		EnableDebug: true,
 	}
 	checkerPubKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(testCheckerPubKey))
 	assert.NoError(t, err)
@@ -183,7 +198,6 @@ func TestService(t *testing.T) {
 			assert.NoError(t, err)
 			respJWT := string(respBody)
 			respJWT = strings.Trim(respJWT, "\"")
-			fmt.Println("respBody ", string(respBody))
 
 			// parse response
 			respData := parserResponseJWT(t, respJWT)

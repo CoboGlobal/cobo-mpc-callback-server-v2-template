@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cobo.event.config.AppConfig;
 import com.cobo.event.service.JwtService;
+import com.cobo.waas2.model.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -48,7 +49,7 @@ public class Application {
             }
 
             String eventData = jwtService.verifyToken(TSS_JWT_MSG);
-            processEvent(eventData);
+            handleEvent(eventData);
 
             // Set HTTP 200 for successful processing
             WebContext.response().status(200);
@@ -61,9 +62,55 @@ public class Application {
         }
     }
 
-    private static void processEvent(String event) {
-        log.info("Processing event: {}", event);
-        // Add your event processing logic here
+    private static void handleEvent(String eventJson) {
+        log.info("Handle event: {}", eventJson);
+        
+        try {
+            TSSEvent event = TSSEvent.fromJson(eventJson);
+            log.info("Event: {}", event);
+
+            if (event.getEventType() == TSSEventType.PING) {
+                log.info("Ping event: {}", event);
+                return;
+            }
+
+            TSSEventData eventData = event.getData();
+            log.info("Event data: {}", eventData);
+
+            assert eventData != null;
+            if (eventData.getActualInstance() instanceof TSSKeyGenEventData) {
+                TSSKeyGenEventData keyGenEventData = (TSSKeyGenEventData) eventData.getActualInstance();
+                log.info("Key gen request: {}", keyGenEventData);
+
+                TSSKeyGenExtra extra = TSSKeyGenExtra.fromJson(String.valueOf(keyGenEventData.getExtraInfo()));
+                log.info("Key gen extra: {}", extra);
+            } else if (eventData.getActualInstance() instanceof TSSKeySignEventData) {
+                TSSKeySignEventData keySignEventData = (TSSKeySignEventData) eventData.getActualInstance();
+                log.info("Key sign request: {}", keySignEventData);
+
+                TSSKeySignExtra extra = TSSKeySignExtra.fromJson(String.valueOf(keySignEventData.getExtraInfo()));
+                log.info("Key sign extra: {}", extra);
+            } else if (eventData.getActualInstance() instanceof TSSKeyReshareEventData) {
+                TSSKeyReshareEventData keyReshareEventData = (TSSKeyReshareEventData) eventData.getActualInstance();
+                log.info("Key reshare request: {}", keyReshareEventData);
+
+                TSSKeyReshareExtra extra = TSSKeyReshareExtra.fromJson(String.valueOf(keyReshareEventData.getExtraInfo()));
+                log.info("Key reshare extra: {}", extra);
+            } else if (eventData.getActualInstance() instanceof TSSKeyShareSignEventData) {
+                TSSKeyShareSignEventData keyShareSignEventData = (TSSKeyShareSignEventData) eventData.getActualInstance();
+                log.info("Key share sign request: {}", keyShareSignEventData);
+
+                TSSKeyShareSignExtra extra = TSSKeyShareSignExtra.fromJson(String.valueOf(keyShareSignEventData.getExtraInfo()));
+                log.info("Key share sign extra: {}", extra);
+            }
+        
+
+        // Add your event handle logic here
+
+
+        } catch (Exception e) {
+            log.error("Failed to parse event: {}", e.getMessage());
+        }
     }
 
     public static void main(String[] args) {

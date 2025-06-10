@@ -7,9 +7,11 @@ from functools import wraps
 import jwt
 from flask import current_app, g, jsonify, request
 
-from app.types import Action, PackageDataClaim, Request, Response, Status
+from app.types import PackageDataClaim, Status
 from app.utils import load_keys
 from app.verify import TssVerifier
+
+import cobo_waas2
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -55,16 +57,16 @@ def init_app(server, config):
             # Get raw request from JWT payload
             raw_request = get_raw_request()
             if not raw_request:
-                response = Response(
-                    status=Status.INVALID_REQUEST, err_str="Invalid request data"
+                response = cobo_waas2.TSSCallbackResponse(
+                    status=Status.INVALID_REQUEST, error="Invalid request data"
                 )
                 return create_response(server, response, 200)
 
             # Process the request
             response = process_request(raw_request)
             if not response:
-                response = Response(
-                    status=Status.INTERNAL_ERROR, err_str="Failed to process request"
+                response = cobo_waas2.TSSCallbackResponse(
+                    status=Status.INTERNAL_ERROR, error="Failed to process request"
                 )
                 return create_response(server, response, 400)
 
@@ -72,7 +74,7 @@ def init_app(server, config):
 
         except Exception as e:
             logger.error(f"Risk control error: {str(e)}")
-            response = Response(status=Status.INVALID_REQUEST, err_str=str(e))
+            response = cobo_waas2.TSSCallbackResponse(status=Status.INVALID_REQUEST, error=str(e))
             return create_response(server, response, 200)
 
 
@@ -86,7 +88,7 @@ def get_raw_request():
         if isinstance(request_data, str):
             request_data = json.loads(request_data)
 
-        req = Request(
+        req = cobo_waas2.TSSCallbackRequest(
             request_id=request_data.get("request_id"),
             request_type=request_data.get("request_type"),
             request_detail=request_data.get("request_detail"),
@@ -98,20 +100,20 @@ def get_raw_request():
         return None
 
 
-def process_request(req: Request) -> Response:
+def process_request(req: cobo_waas2.TSSCallbackRequest) -> cobo_waas2.TSSCallbackResponse:
     """Process request with TSS verifier"""
     verifier = TssVerifier.new()
 
     err = verifier.verify(req)
     if err:
-        return Response(
+        return cobo_waas2.TSSCallbackResponse(
             status=Status.INTERNAL_ERROR,
             request_id=req.request_id,
-            action=Action.REJECT,
-            err_str=err,
+            action=cobo_waas2.TSSCallbackActionType.REJECT,
+            error=err,
         )
 
-    return Response(status=Status.OK, request_id=req.request_id, action=Action.APPROVE)
+    return cobo_waas2.TSSCallbackResponse(status=Status.OK, request_id=req.request_id, action=cobo_waas2.TSSCallbackActionType.APPROVE)
 
 
 def create_token(server, data):
@@ -163,14 +165,14 @@ def jwt_required(f):
         try:
             verify_token(current_app)
         except jwt.InvalidTokenError as e:
-            response = Response(status=Status.INVALID_TOKEN, err_str=str(e))
+            response = cobo_waas2.TSSCallbackResponse(status=Status.INVALID_TOKEN, error=str(e))
             return create_response(current_app, response)
         return f(*args, **kwargs)
 
     return decorated
 
 
-def create_response(server, response: Response, http_status=200):
+def create_response(server, response: cobo_waas2.TSSCallbackResponse, http_status=200):
     """Create HTTP response with JWT token"""
     try:
         response_data = json.dumps(response.to_dict())

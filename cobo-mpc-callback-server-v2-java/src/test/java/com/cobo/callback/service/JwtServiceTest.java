@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.cobo.callback.config.AppConfig;
-import com.cobo.callback.model.Response;
+import com.cobo.waas2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -67,12 +67,12 @@ class JwtServiceTest {
 
     @Test
     void testCreateToken() throws Exception {
-        Response testData = Response.builder()
-                .status(Response.STATUS_OK)
-                .requestId("test-123")
-                .action(Response.ACTION_APPROVE)
-                .build();
-        String testJson = objectMapper.writeValueAsString(testData);
+        TSSCallbackResponse testData = new TSSCallbackResponse();
+        testData.setStatus(0);
+        testData.setRequestId("test-123");
+        testData.setAction(TSSCallbackActionType.APPROVE);
+
+        String testJson = testData.toJson();
 
         String token = jwtService.createToken(testJson);
         assertNotNull(token);
@@ -91,12 +91,11 @@ class JwtServiceTest {
 
     @Test
     void testVerifyToken() throws Exception {
-        Response testData = Response.builder()
-                .status(Response.STATUS_OK)
-                .requestId("test-123")
-                .action(Response.ACTION_APPROVE)
-                .build();
-        String testJson = objectMapper.writeValueAsString(testData);
+        TSSCallbackResponse testData = new TSSCallbackResponse();
+        testData.setStatus(0);
+        testData.setRequestId("test-123");
+        testData.setAction(TSSCallbackActionType.APPROVE);
+        String testJson = testData.toJson();
 
         String token = jwtService.createToken(testJson);
 
@@ -115,12 +114,11 @@ class JwtServiceTest {
     void testVerifyExpiredToken() throws Exception {
         appConfig.setTokenExpireMinutes(-1);
 
-        Response testData = Response.builder()
-                .status(Response.STATUS_OK)
-                .requestId("test-123")
-                .action(Response.ACTION_APPROVE)
-                .build();
-        String testJson = objectMapper.writeValueAsString(testData);
+        TSSCallbackResponse testData = new TSSCallbackResponse();
+        testData.setStatus(0);
+        testData.setRequestId("test-123");
+        testData.setAction(TSSCallbackActionType.APPROVE);
+        String testJson = testData.toJson();
 
         String token = jwtService.createToken(testJson);
 
