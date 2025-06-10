@@ -5,7 +5,7 @@ go 1.24
 toolchain go1.24.2
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.14.0
+	github.com/CoboGlobal/cobo-waas2-go-sdk v1.16.0
 	github.com/kluctl/kluctl/lib v0.0.0-20250423013206-79401cdbbbd6
 	github.com/test-go/testify v1.1.4
 )
