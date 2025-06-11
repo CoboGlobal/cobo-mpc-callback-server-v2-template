@@ -7,17 +7,17 @@ import (
 	"github.com/kluctl/kluctl/lib/go-jinja2"
 )
 
-type Statement struct {
+type StatementBuilder struct {
 	template string
 }
 
-func NewStatement(template string) *Statement {
-	return &Statement{
+func NewStatementBuilder(template string) *StatementBuilder {
+	return &StatementBuilder{
 		template: template,
 	}
 }
 
-func (s *Statement) BuildStatementV2(bizData string) (string, error) {
+func (s *StatementBuilder) Build(bizData string) (string, error) {
 
 	var data map[string]interface{}
 	if err := json.Unmarshal([]byte(bizData), &data); err != nil {

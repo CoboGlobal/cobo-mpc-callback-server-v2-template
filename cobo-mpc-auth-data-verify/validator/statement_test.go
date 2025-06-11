@@ -38,8 +38,8 @@ func TestBuildStatementV2(t *testing.T) {
 	templateContent, err := getTemplateContent(bizKey, version)
 	assert.NoError(t, err)
 
-	s := NewStatement(templateContent)
-	message, err := s.BuildStatementV2(data)
+	s := NewStatementBuilder(templateContent)
+	message, err := s.Build(data)
 	assert.NoError(t, err)
 	fmt.Printf("Data:\n %s\n", data)
 	fmt.Printf("Message:\n %s\n", message)
