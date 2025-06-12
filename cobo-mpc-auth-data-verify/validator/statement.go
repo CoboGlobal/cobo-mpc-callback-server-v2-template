@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/kluctl/kluctl/lib/go-jinja2"
 )
 
@@ -62,4 +63,24 @@ func (s *StatementBuilder) Build(bizData string) (string, error) {
 	}
 
 	return message, nil
+}
+
+func CompareStatementMessage(message1, message2 string) (bool, string) {
+	var data1, data2 interface{}
+
+	// Parse first JSON string
+	if err := json.Unmarshal([]byte(message1), &data1); err != nil {
+		return false, fmt.Sprintf("failed to parse first statement message: %v", err)
+	}
+
+	// Parse second JSON string
+	if err := json.Unmarshal([]byte(message2), &data2); err != nil {
+		return false, fmt.Sprintf("failed to parse second statement message: %v", err)
+	}
+
+	if diff := cmp.Diff(data1, data2); diff != "" {
+		return false, fmt.Sprintf("statement message differences:\n%s", diff)
+	}
+
+	return true, ""
 }
