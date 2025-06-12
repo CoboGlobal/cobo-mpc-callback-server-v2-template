@@ -20,12 +20,22 @@ func NewStatementBuilder(template string) *StatementBuilder {
 // getJinja2Filters returns a list of filters to be used with Jinja2
 func getJinja2Filters() []jinja2.Jinja2Opt {
 	return []jinja2.Jinja2Opt{
-		jinja2.WithFilter("toString", "lambda v: json.dumps(v, ensure_ascii=False)"),
-		jinja2.WithFilter("toInt", "lambda v: int(v)"),
-		jinja2.WithFilter("len", "lambda v: len(v)"),
-		jinja2.WithFilter("toList1", "lambda v: json.dumps([str(x) for x in v if x], ensure_ascii=False)"),
-		jinja2.WithFilter("toList2", "lambda v: json.dumps([[str(x) for x in row if x] for row in v if row], ensure_ascii=False)"),
-		jinja2.WithFilter("toRules", "lambda v: json.dumps([{str(k): str(v) for k, v in x.items()} for x in v if x], ensure_ascii=False)"),
+		jinja2.WithFilter("toString", `import json
+def toString(v):
+    return json.dumps(v, ensure_ascii=False)`),
+		jinja2.WithFilter("toInt", `def toInt(v):
+    return int(v)`),
+		jinja2.WithFilter("len", `def len(v):
+    return __builtins__['len'](v)`),
+		jinja2.WithFilter("toList1", `import json
+def toList1(v):
+    return json.dumps([str(x) for x in v if x], ensure_ascii=False)`),
+		jinja2.WithFilter("toList2", `import json
+def toList2(v):
+    return json.dumps([[str(x) for x in row if x] for row in v if row], ensure_ascii=False)`),
+		jinja2.WithFilter("toRules", `import json
+def toRules(v):
+    return json.dumps([{str(k): str(v) for k, v in x.items()} for x in v if x], ensure_ascii=False)`),
 	}
 }
 

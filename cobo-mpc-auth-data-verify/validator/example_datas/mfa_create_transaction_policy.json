@@ -37,5 +37,7 @@
     "action": "Create Transaction Policy",
     "environment": "Sandbox",
     "statement_uuid": "d557b647-08d0-45e7-bede-702feafb9810",
-    "template_version": "1.0.0"
+    "template_version": "1.0.0",
+    "created_time": 1749696925,
+    "expired_time": 1749698725
 }
