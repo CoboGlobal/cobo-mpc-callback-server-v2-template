@@ -30,20 +30,26 @@ func TestRenderTemplate(t *testing.T) {
 }
 
 func TestBuildStatementV2(t *testing.T) {
-	bizKey := "mfa_create_transaction_policy"
-	data, err := getBizData(bizKey)
-	assert.NoError(t, err)
+	bizKeys := []string{
+		"mfa_create_transaction_policy",
+		//"mfa_delete_transaction_policy",
+		//"mfa_edit_transaction_policy",
+		//"mfa_adjust_priorities",
+	}
+	for _, bizKey := range bizKeys {
+		data, err := getBizData(bizKey)
+		assert.NoError(t, err)
 
-	version := "1.0.0"
-	templateContent, err := getTemplateContent(bizKey, version)
-	assert.NoError(t, err)
+		version := "1.0.0"
+		templateContent, err := getTemplateContent(bizKey, version)
+		assert.NoError(t, err)
 
-	s := NewStatementBuilder(templateContent)
-	message, err := s.Build(data)
-	assert.NoError(t, err)
-	fmt.Printf("Data:\n %s\n", data)
-	fmt.Printf("Message:\n %s\n", message)
-
+		s := NewStatementBuilder(templateContent)
+		message, err := s.Build(data)
+		assert.NoError(t, err)
+		//fmt.Printf("Data:\n %s\n", data)
+		fmt.Printf("bizKey: %s, Message:\n %s\n", bizKey, message)
+	}
 }
 
 func getBizData(bizKey string) (string, error) {

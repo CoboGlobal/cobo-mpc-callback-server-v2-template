@@ -41,7 +41,7 @@
     "approval_users": [],
     "initiator": "test@cobo.com",
     "org_name": "cobo",
-    "operation_name": "Create Transaction Policy",
+    "operation_name": "Delete Transaction Policy",
     "environment": "Sandbox",
     "statement_uuid": "d557b647-08d0-45e7-bede-702feafb9810",
     "created_time": "2025-04-16 10:42:14",
