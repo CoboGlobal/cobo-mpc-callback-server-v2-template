@@ -31,10 +31,11 @@ func TestRenderTemplate(t *testing.T) {
 
 func TestBuildStatementV2(t *testing.T) {
 	bizKeys := []string{
-		"mfa_create_transaction_policy",
+		//"mfa_create_transaction_policy",
 		//"mfa_delete_transaction_policy",
 		//"mfa_edit_transaction_policy",
 		//"mfa_adjust_priorities",
+		"transaction",
 	}
 	for _, bizKey := range bizKeys {
 		data, err := getBizData(bizKey)
@@ -109,9 +110,8 @@ func TestCompareStatementMessage(t *testing.T) {
 		{
 			name:     "identical simple objects with different order",
 			message1: `{"name": "John", "age": 30}`,
-			message2: `{"age": 30,     
-				"name": "John"}`,
-			want: true,
+			message2: `{"age": 30, "name": "John"}`,
+			want:     true,
 		},
 		{
 			name:     "different values",

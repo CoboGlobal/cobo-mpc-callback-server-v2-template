@@ -1,0 +1,140 @@
+{
+  "_theme": "structured",
+  "_biz_version": {{ template_version | toString }},
+  "header": {
+    "title": {{ header_title | toString }},
+    "title_icon": ""
+  },
+  "body": {
+    "components": [
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Organization",
+            "data": {
+              "value": {{ org_name | toString }},
+              "label": {{ environment | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Source",
+            "data": {
+              "value": {{ wallet_name | toString }},
+              "label": {{ source.source_type | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Initiator",
+            "data": {
+              "value": {{ initiator | toString }}
+            }
+          },
+          {
+            "_component_type": "date_time",
+            "key": "Created Time",
+            "data": {
+              "value": {{ created_time | toInt }}
+            }
+          },
+          {% if expired_time %}
+          {
+            "_component_type": "date_time",
+            "key": "Expired Time",
+            "data": {
+              "value": {{ expired_time | toInt }}
+            }
+          },
+          {% endif %}
+          {
+            "_component_type": "text",
+            "key": "Message ID",
+            "data": {
+              "value": {{ statement_uuid | toString }}
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "key": "Transaction Type",
+            "data": {
+              "value": {{ type | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_actions": [
+              "copy"
+            ],
+            "key": "Request ID",
+            "data": {
+              "value": {{ request_id | toString }}
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "_actions": [
+              "copy"
+            ],
+            "key": "From Address",
+            "data": {
+              {% if source.source_type == "Org-Controlled" %}
+              "value": {{ source.address | toString }}
+              {% elif source.source_type == "Asset" %}
+              "value": {{ wallet_name | toString }}
+              {% endif %}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_actions": [
+              "copy"
+            ],
+            "key": "To Address",
+            "data": {
+              {% if destination.account_output.memo %}
+              "value": {{ destination.account_output.address ~ "|" ~ destination.account_output.memo | toString }}
+              {% else %}
+              "value": {{ destination.account_output.address | toString }}
+              {% endif %}
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "key": "Amount",
+            "data": {
+              "value": {{ (destination.account_output.amount ~ " " ~ token_id) | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "Fee",
+            "data": {
+              "value": {{ (fee.fee_used ~ " " ~ fee.token_id) | toString }}
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
