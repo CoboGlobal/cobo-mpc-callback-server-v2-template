@@ -66,5 +66,7 @@ func (v *AuthValidator) Verify() error {
 		return fmt.Errorf("result is not approved(2): %d", v.authData.Result)
 	}
 
+	// step 4: verify biz data and tss callback data are match
+
 	return nil
 }

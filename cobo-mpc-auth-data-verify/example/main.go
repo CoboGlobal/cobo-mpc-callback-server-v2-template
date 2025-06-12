@@ -1,15 +1,48 @@
 package main
 
 import (
-	// "context"
-	// "fmt"
+	"fmt"
+	"log"
+	"slices"
 
-	// "github.com/CoboGlobal/cobo-mpc-auth-data-verify/validator"
-	// "github.com/CoboGlobal/cobo-mpc-auth-data-verify/waas2"
+	"github.com/ZhaoZheCobo/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/validator"
 )
+
+// "github.com/CoboGlobal/cobo-mpc-auth-data-verify/waas2"
+
+var pubkeyWhitelist = []string{
+	"",
+}
 
 func main() {
 
+	transactionID := "mock_transaction_id"
+	authData, err := getAuthData(transactionID)
+	if err != nil {
+		log.Printf("error getting auth data: %v\n", err)
+		return
+	}
+
+	if !slices.Contains(pubkeyWhitelist, authData.Pubkey) {
+		log.Printf("pubkey is not in whitelist: %s\n", authData.Pubkey)
+		return
+	}
+
+	err = verifyAuthData(authData)
+	if err != nil {
+		log.Printf("error verifying auth data: %v\n", err)
+		return
+	}
+}
+
+// getAuthData get auth data from waas2
+func getAuthData(transactionID string) (*validator.AuthData, error) {
+
+	return nil, fmt.Errorf("not implemented")
+}
+
+func verifyAuthData(authData *validator.AuthData) error {
+	return validator.NewAuthValidator(authData).Verify()
 }
 
 // func getVerifier(apiSecret string, transactionId string) error {
