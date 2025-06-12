@@ -92,3 +92,92 @@ func getTemplateContent(bizKey string, version string) (string, error) {
 	}
 	return string(templateContent), nil
 }
+
+func TestCompareStatementMessage(t *testing.T) {
+	tests := []struct {
+		name     string
+		message1 string
+		message2 string
+		want     bool
+	}{
+		{
+			name:     "identical simple objects",
+			message1: `{"name": "John", "age": 30}`,
+			message2: `{"name": "John", "age": 30}`,
+			want:     true,
+		},
+		{
+			name:     "identical simple objects with different order",
+			message1: `{"name": "John", "age": 30}`,
+			message2: `{"age": 30,     
+				"name": "John"}`,
+			want: true,
+		},
+		{
+			name:     "different values",
+			message1: `{"name": "John", "age": 30}`,
+			message2: `{"name": "Jane", "age": 30}`,
+			want:     false,
+		},
+		{
+			name:     "missing field",
+			message1: `{"name": "John", "age": 30}`,
+			message2: `{"name": "John"}`,
+			want:     false,
+		},
+		{
+			name:     "nested objects",
+			message1: `{"user": {"name": "John", "address": {"city": "Beijing"}}}`,
+			message2: `{"user": {"name": "John", "address": {"city": "Shanghai"}}}`,
+			want:     false,
+		},
+		{
+			name:     "arrays",
+			message1: `{"scores": [1, 2, 3]}`,
+			message2: `{"scores": [1, 2, 4]}`,
+			want:     false,
+		},
+		{
+			name:     "invalid json first message",
+			message1: `{"name": "John", "age": 30`,
+			message2: `{"name": "John", "age": 30}`,
+			want:     false,
+		},
+		{
+			name:     "invalid json second message",
+			message1: `{"name": "John", "age": 30}`,
+			message2: `{"name": "John", "age": 30`,
+			want:     false,
+		},
+		{
+			name:     "different types",
+			message1: `{"age": "30"}`,
+			message2: `{"age": 30}`,
+			want:     false,
+		},
+		{
+			name:     "empty objects",
+			message1: `{}`,
+			message2: `{}`,
+			want:     true,
+		},
+		{
+			name:     "null values",
+			message1: `{"value": null}`,
+			message2: `{"value": null}`,
+			want:     true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, gotDiff := CompareStatementMessage(tt.message1, tt.message2)
+			if got != tt.want {
+				t.Errorf("CompareStatementMessage() got = %v, want %v", got, tt.want)
+			}
+			if gotDiff != "" {
+				t.Logf("gotDiff: %s", gotDiff)
+			}
+		})
+	}
+}
