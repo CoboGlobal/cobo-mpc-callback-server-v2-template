@@ -10,7 +10,7 @@ import (
 	"github.com/test-go/testify/assert"
 )
 
-const testApiSecret = "03b858bcfc7b62b5bd6569e6e68ce466626ff785b5694e068f27b56cc743dd95"
+const testApiSecret = ""
 
 func TestGetTransactionApprovalDetail(t *testing.T) {
 	client := NewClient(testApiSecret)
@@ -29,6 +29,4 @@ func TestCreateAPIKeys(t *testing.T) {
 	assert.NoError(t, err)
 	fmt.Printf("api key: %v\n", apiKey)
 	fmt.Printf("api secret: %v\n", apiSecret)
-	// ee5ff16261cf8b11bc0095a8837c91f9414af504f2eb4f3a9608f0f73583bb81
-	// 03b858bcfc7b62b5bd6569e6e68ce466626ff785b5694e068f27b56cc743dd95
 }

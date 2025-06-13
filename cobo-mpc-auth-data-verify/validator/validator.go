@@ -4,14 +4,6 @@ import (
 	"fmt"
 )
 
-//all data
-// 	result    int
-// 	pubkey    string
-// 	signature string
-//  templateContent string
-//  bizData string
-//  callbackData string
-
 type Validator interface {
 	Verify() error
 }

@@ -31,7 +31,7 @@ func TestRenderTemplate(t *testing.T) {
 
 func TestBuildStatementV2(t *testing.T) {
 	bizKeys := []string{
-		//"mfa_create_transaction_policy",
+		"mfa_create_transaction_policy",
 		"transaction",
 	}
 	for _, bizKey := range bizKeys {
@@ -99,7 +99,7 @@ func TestCompareStatementMessage(t *testing.T) {
 		want     bool
 	}{
 		{
-			name: "zz test",
+			name: "transaction message object",
 			message1: `{
   "_theme": "structured",
   "_biz_version": "1.0.0",
