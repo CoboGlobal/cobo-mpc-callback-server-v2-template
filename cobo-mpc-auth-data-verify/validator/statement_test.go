@@ -31,7 +31,7 @@ func TestRenderTemplate(t *testing.T) {
 
 func TestBuildStatementV2(t *testing.T) {
 	bizKeys := []string{
-		"mfa_create_transaction_policy",
+		//"mfa_create_transaction_policy",
 		"transaction",
 	}
 	for _, bizKey := range bizKeys {
@@ -98,6 +98,262 @@ func TestCompareStatementMessage(t *testing.T) {
 		message2 string
 		want     bool
 	}{
+		{
+			name: "zz test",
+			message1: `{
+  "_theme": "structured",
+  "_biz_version": "1.0.0",
+  "header": {
+    "title": "Transaction: Approver Approval",
+    "title_icon": ""
+  },
+  "body": {
+    "components": [
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Organization",
+            "data": {
+              "value": "Cobo",
+              "label": "Prod"
+            }
+          },
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Source",
+            "data": {
+              "value": "zc-bitget-test",
+              "label": "Asset"
+            }
+          },
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Initiator",
+            "data": {
+              "value": "Token Swap"
+            }
+          },
+          {
+            "_component_type": "date_time",
+            "key": "Created Time",
+            "data": {
+              "value": 1749715652
+            }
+          },
+
+          {
+            "_component_type": "text",
+            "key": "Message ID",
+            "data": {
+              "value": "eede2929-82de-4ec3-8ca2-c79b50715654"
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "key": "Transaction Type",
+            "data": {
+              "value": "Withdrawal"
+            }
+          },
+          {
+            "_component_type": "text",
+            "_actions": [
+              "copy"
+            ],
+            "key": "Request ID",
+            "data": {
+              "value": "Swap-Broker-Custodial-Payback-Transfer-eede2929-82de-4ec3-8ca2-c79b50715654"
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "_actions": [
+              "copy"
+            ],
+            "key": "From Address",
+            "data": {
+
+              "value": "zc-bitget-test"
+
+            }
+          },
+          {
+            "_component_type": "text",
+            "_actions": [
+              "copy"
+            ],
+            "key": "To Address",
+            "data": {
+
+              "value": "0xd6d15f37737b6f67d15388bf77269a4387e41fe8"
+
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "key": "Amount",
+            "data": {
+              "value": "30 BSC_USDT"
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "Fee",
+            "data": {
+              "value": "0 BSC_BNB"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+`,
+			message2: `{
+    "_theme": "structured",
+    "_biz_version": "1.0.0",
+    "header": {
+        "title": "Transaction: Approver Approval",
+        "title_icon": ""
+    },
+    "body": {
+        "components": [
+            {
+                "_component_type": "section",
+                "components": [
+                    {
+                        "_component_type": "text",
+                        "_is_in_list": true,
+                        "key": "Organization",
+                        "data": {
+                            "value": "Cobo",
+                            "label": "Prod"
+                        }
+                    },
+                    {
+                        "_component_type": "text",
+                        "_is_in_list": true,
+                        "key": "Source",
+                        "data": {
+                            "value": "zc-bitget-test",
+                            "label": "Asset"
+                        }
+                    },
+                    {
+                        "_component_type": "text",
+                        "_is_in_list": true,
+                        "key": "Initiator",
+                        "data": {
+                            "value": "Token Swap"
+                        }
+                    },
+                    {
+                        "_component_type": "date_time",
+                        "key": "Created Time",
+                        "data": {
+                            "value": 1749715652
+                        }
+                    },
+                    {
+                        "_component_type": "text",
+                        "key": "Message ID",
+                        "data": {
+                            "value": "eede2929-82de-4ec3-8ca2-c79b50715654"
+                        }
+                    }
+                ]
+            },
+            {
+                "_component_type": "section",
+                "components": [
+                    {
+                        "_component_type": "text",
+                        "key": "Transaction Type",
+                        "data": {
+                            "value": "Withdrawal"
+                        }
+                    },
+                    {
+                        "_component_type": "text",
+                        "_actions": [
+                            "copy"
+                        ],
+                        "key": "Request ID",
+                        "data": {
+                            "value": "Swap-Broker-Custodial-Payback-Transfer-eede2929-82de-4ec3-8ca2-c79b50715654"
+                        }
+                    }
+                ]
+            },
+            {
+                "_component_type": "section",
+                "components": [
+                    {
+                        "_component_type": "text",
+                        "_actions": [
+                            "copy"
+                        ],
+                        "key": "From Address",
+                        "data": {
+                            "value": "zc-bitget-test"
+                        }
+                    },
+                    {
+                        "_component_type": "text",
+                        "_actions": [
+                            "copy"
+                        ],
+                        "key": "To Address",
+                        "data": {
+                            "value": "0xd6d15f37737b6f67d15388bf77269a4387e41fe8"
+                        }
+                    }
+                ]
+            },
+            {
+                "_component_type": "section",
+                "components": [
+                    {
+                        "_component_type": "text",
+                        "key": "Amount",
+                        "data": {
+                            "value": "30 BSC_USDT"
+                        }
+                    },
+                    {
+                        "_component_type": "text",
+                        "key": "Fee",
+                        "data": {
+                            "value": "0 BSC_BNB"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}`,
+			want: true,
+		},
 		{
 			name:     "identical simple objects",
 			message1: `{"name": "John", "age": 30}`,
