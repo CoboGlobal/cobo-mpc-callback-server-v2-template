@@ -15,123 +15,44 @@ var pubkeyWhitelist = []string{
 }
 
 func main() {
-
 	transactionID := "mock_transaction_id"
+
+	// step 1: get auth data for transaction
 	authData, err := getAuthData(transactionID)
 	if err != nil {
 		log.Printf("error getting auth data: %v\n", err)
 		return
 	}
 
+	// step 2: ensure pubkey is in whitelist
 	if !slices.Contains(pubkeyWhitelist, authData.Pubkey) {
 		log.Printf("pubkey is not in whitelist: %s\n", authData.Pubkey)
 		return
 	}
 
+	// step 3: verify auth data
 	err = verifyAuthData(authData)
 	if err != nil {
 		log.Printf("error verifying auth data: %v\n", err)
 		return
 	}
+
+	// step 4: verify biz data is valid:
+	// 1. biz data and tss callback data are matched
+	// 2. biz data and transaction detail from waas2 are matched
+
 }
 
 // getAuthData get auth data from waas2
 func getAuthData(transactionID string) (*validator.AuthData, error) {
-
+	// waas2Client := waas2.NewClient(apiSecret)
+	// txDetail, err := waas2Client.GetTransactionApprovalDetail(context.Background(), transactionId)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to get transaction approval detail: %w", err)
+	// }
 	return nil, fmt.Errorf("not implemented")
 }
 
 func verifyAuthData(authData *validator.AuthData) error {
 	return validator.NewAuthValidator(authData).Verify()
 }
-
-// func getVerifier(apiSecret string, transactionId string) error {
-// 	//
-// 	waas2Client := waas2.NewClient(apiSecret)
-// 	txDetail, err := waas2Client.GetTransactionApprovalDetail(context.Background(), transactionId)
-// 	if err != nil {
-// 		return fmt.Errorf("failed to get transaction approval detail: %w", err)
-// 	}
-
-// 	// 	message   string - 不需要，计算出来的
-// 	// 	result    string
-// 	// 	pubkey    string  - int
-// 	// 	signature string
-// 	// 	algorithm string - api 有相应字段
-// 	//  templateContent string - 审核模版 api 有相应字段
-// 	//  bizData string - api 有相应字段
-// 	//  callbackData string - callback 数据
-
-// 	if txDetail == nil {
-// 		return fmt.Errorf("transaction approval detail is nil")
-// 	}
-// 	if txDetail.Spender == nil {
-// 		return fmt.Errorf("spender is nil")
-// 	}
-// 	txSpender := txDetail.Spender
-
-// 	// parse total result
-// 	txResult := txSpender.Result
-// 	if txResult == nil {
-// 		return fmt.Errorf("spender result is nil")
-// 	}
-// 	result := *txResult
-// 	if result != "Approved" {
-// 		return fmt.Errorf("spender result is not approved")
-// 	}
-
-// 	// parse each user detail
-// 	for _, userDetail := range txSpender.UserDetails {
-// 		// parse message
-// 		txMessage := userDetail.Message
-// 		if txMessage == nil {
-// 			return fmt.Errorf("message is nil")
-// 		}
-// 		message := *txMessage
-
-// 		// parse pubkey
-// 		txPubkey := userDetail.Pubkey
-// 		if txPubkey == nil {
-// 			return fmt.Errorf("pubkey is nil")
-// 		}
-// 		pubkey := *txPubkey
-
-// 		// parse signature
-// 		txSignature := userDetail.Signature
-// 		if txSignature == nil {
-// 			return fmt.Errorf("signature is nil")
-// 		}
-// 		signature := *txSignature
-
-// 		// parse result
-// 		txResult := userDetail.Result
-// 		if txResult == nil {
-// 			return fmt.Errorf("result is nil")
-// 		}
-// 		result := *txResult
-
-// 		// template content
-// 		templateContent := ""
-// 		v := validator.NewValidator(-1, pubkey, signature, "secp256k1", templateContent, bizData)
-// 		err = v.Verify()
-// 		if err != nil {
-// 			return fmt.Errorf("error verifying: %w", err)
-// 		}
-// 		// pubkey is valid in whitelist
-
-// 		// compare callback data with biz data
-// 		equal, err := verifier.CompareCallbackData(callbackData, bizData)
-// 		if err != nil {
-// 			return fmt.Errorf("error comparing callback data: %w", err)
-// 		}
-// 		if !equal {
-// 			return fmt.Errorf("callback data is not equal to biz data")
-// 		}
-
-// 		// verify callback data and signing hash
-// 		// TODO: implement this
-
-// 	}
-
-// 	return nil
-// }
