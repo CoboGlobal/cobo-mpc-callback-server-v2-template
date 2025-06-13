@@ -6,9 +6,8 @@ import (
 	"slices"
 
 	"github.com/ZhaoZheCobo/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/validator"
+	// "github.com/CoboGlobal/cobo-mpc-auth-data-verify/waas2"
 )
-
-// "github.com/CoboGlobal/cobo-mpc-auth-data-verify/waas2"
 
 var pubkeyWhitelist = []string{
 	"",
