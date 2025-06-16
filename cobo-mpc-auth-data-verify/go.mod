@@ -1,4 +1,4 @@
-module github.com/ZhaoZheCobo/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify
+module github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify
 
 go 1.24
 
