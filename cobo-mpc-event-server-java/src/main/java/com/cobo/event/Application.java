@@ -64,7 +64,7 @@ public class Application {
 
     private static void handleEvent(String eventJson) {
         log.info("Handle event: {}", eventJson);
-        
+
         try {
             TSSEvent event = TSSEvent.fromJson(eventJson);
             log.info("Event: {}", event);
@@ -103,7 +103,7 @@ public class Application {
                 TSSKeyShareSignExtra extra = TSSKeyShareSignExtra.fromJson(String.valueOf(keyShareSignEventData.getExtraInfo()));
                 log.info("Key share sign extra: {}", extra);
             }
-        
+
 
         // Add your event handle logic here
 

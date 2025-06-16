@@ -363,7 +363,7 @@ func TestCompareStatementMessage(t *testing.T) {
 		{
 			name:     "identical simple objects with different order",
 			message1: `{"name": "John", "age": 30}`,
-			message2: `{"age": 30,     
+			message2: `{"age": 30,
 				"name": "John"}`,
 			want: true,
 		},

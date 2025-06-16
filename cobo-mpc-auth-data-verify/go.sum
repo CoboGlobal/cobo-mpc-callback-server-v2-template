@@ -37,10 +37,10 @@ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOl
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
 github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
-github.com/kluctl/go-embed-python v0.0.0-3.11.11-20241219-1 h1:yVXFTxa6cvhLC6TwkDEHmNaiWlDyaFEGiXd1DQdoeOU=
-github.com/kluctl/go-embed-python v0.0.0-3.11.11-20241219-1/go.mod h1:3ebNU9QBrNpUO+Hj6bHaGpkh5pymDHQ+wwVPHTE4mCE=
-github.com/kluctl/kluctl/lib v0.0.0-20250423013206-79401cdbbbd6 h1:LzGs+jeewe3cjRnkjapbb6j4qzjKKuo7JCbUNGEbKds=
-github.com/kluctl/kluctl/lib v0.0.0-20250423013206-79401cdbbbd6/go.mod h1:prpq7ulLr0X3bDhECGyVfqRyy7NfnHKTpv8P9jmmqrY=
+github.com/kluctl/go-embed-python v0.0.0-3.13.1-20241219-1 h1:x1cSEj4Ug5mpuZgUHLvUmlc5r//KHFn6iYiRSrRcVy4=
+github.com/kluctl/go-embed-python v0.0.0-3.13.1-20241219-1/go.mod h1:3ebNU9QBrNpUO+Hj6bHaGpkh5pymDHQ+wwVPHTE4mCE=
+github.com/kluctl/kluctl/lib v0.0.0-20250411145926-c8424c0664fe h1:Zyj0q/8hgI+dTxYxVRHGw/JXGpPDSZzpCmkALJpSmbs=
+github.com/kluctl/kluctl/lib v0.0.0-20250411145926-c8424c0664fe/go.mod h1:UMmQWGCwloGDPSkSP+TPw3oFyFapuvzMhGh9hDJzUnY=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
