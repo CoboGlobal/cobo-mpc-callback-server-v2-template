@@ -14,7 +14,7 @@ type AuthData struct {
 	Signature string `json:"signature"`
 	Message   string `json:"message"`
 	Template  string `json:"template"`
-	BizData   string `json:"bizData"`
+	BizData   string `json:"biz_data"`
 }
 
 type AuthValidator struct {
