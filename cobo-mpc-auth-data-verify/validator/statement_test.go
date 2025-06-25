@@ -6,33 +6,40 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kluctl/kluctl/lib/go-jinja2"
+	"github.com/nikolalohinski/gonja/v2"
+	"github.com/nikolalohinski/gonja/v2/exec"
 	"github.com/test-go/testify/assert"
 )
 
 func TestRenderTemplate(t *testing.T) {
-	j2, err := jinja2.NewJinja2("example", 1,
-		jinja2.WithGlobal("test_var1", 1),
-		jinja2.WithGlobal("test_var2", map[string]any{"test": 2}))
-	if err != nil {
-		panic(err)
-	}
-	defer j2.Close()
-
-	template := "{{ test_var1 }}"
-
-	s, err := j2.RenderString(template)
+	template, err := gonja.FromString("test_var1 = {{ test_var1 }}; test_var2.test = {{ test_var2.test }}")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("template: %s\nresult: %s", template, s)
+	context := exec.NewContext(map[string]interface{}{
+		"test_var1": 1,
+		"test_var2": map[string]interface{}{"test": 2},
+	})
+
+	result, err := template.ExecuteToString(context)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("template: {{ test_var1 }}\nresult: %s", result)
 }
 
 func TestBuildStatementV2(t *testing.T) {
 	bizKeys := []string{
-		"mfa_create_transaction_policy",
-		"transaction",
+		// "mfa_create_transaction_policy",
+		// "transaction",
+		"withdraw_approver_approval",
+		"withdraw_spender_check",
+		"contract_call_approver_approval",
+		"contract_call_spender_check",
+		"sign_message_approver_approval",
+		"sign_message_spender_check",
 	}
 	for _, bizKey := range bizKeys {
 		data, err := getBizData(bizKey)
@@ -46,7 +53,18 @@ func TestBuildStatementV2(t *testing.T) {
 		message, err := s.Build(data)
 		assert.NoError(t, err)
 		//fmt.Printf("Data:\n %s\n", data)
-		fmt.Printf("bizKey: %s, Message:\n %s\n", bizKey, message)
+		//fmt.Printf("bizKey: %s, Message:\n %s\n", bizKey, message)
+
+		message2, err := getMessage(bizKey)
+		assert.NoError(t, err)
+
+		got, gotDiff := CompareStatementMessage(message, message2)
+		if got != true {
+			t.Errorf("CompareStatementMessage() got = %v, want %v", got, true)
+		}
+		if gotDiff != "" {
+			t.Logf("gotDiff: %s", gotDiff)
+		}
 	}
 }
 
@@ -68,6 +86,26 @@ func getBizData(bizKey string) (string, error) {
 	}
 
 	return string(dataBytes), nil
+}
+
+func getMessage(bizKey string) (string, error) {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Printf("Error getting current directory: %v\n", err)
+		return "", fmt.Errorf("error getting current directory: %w", err)
+	}
+
+	messageDir := filepath.Join(currentDir, "example_datas", "messages")
+	messageFile := fmt.Sprintf("%s_message.json", bizKey)
+	fullPath := filepath.Join(messageDir, messageFile)
+
+	messageBytes, err := os.ReadFile(fullPath)
+	if err != nil {
+		fmt.Printf("Error reading message file: %v\n", err)
+		return "", fmt.Errorf("error reading message file: %w", err)
+	}
+
+	return string(messageBytes), nil
 }
 
 func getTemplateContent(bizKey string, version string) (string, error) {
