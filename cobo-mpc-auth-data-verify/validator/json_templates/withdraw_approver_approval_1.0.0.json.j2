@@ -1,6 +1,17 @@
 {
   "_theme": "structured",
   "_biz_version": {{ template_version | toString }},
+  {% if is_for_sign %}
+  "_post_actions": [
+    {
+        "type": "sign_message",
+        "data": {
+            "transaction_id": {{ transaction_id | toString }},
+            "transaction_type": {{ type | toString }}
+        }
+    }
+  ],
+  {% endif %}
   "header": {
     "title": {{ header_title | toString }},
     "title_icon": ""
@@ -15,8 +26,8 @@
             "_is_in_list": true,
             "key": "Organization",
             "data": {
-              "value": {{ org_name | toString }},
-              "label": {{ environment | toString }}
+              "value": {{ show_info.org_name | toString }},
+              "label": {{ show_info.environment | toString }}
             }
           },
           {
@@ -24,7 +35,7 @@
             "_is_in_list": true,
             "key": "Source",
             "data": {
-              "value": {{ wallet_name | toString }},
+              "value": {{ show_info.wallet_name | toString }},
               "label": {{ source.source_type | toString }}
             }
           },
@@ -75,7 +86,7 @@
             "_component_type": "text",
             "key": "Chain",
             "data": {
-              "value": {{ chain | toString }}
+              "value": {{ chain_id | toString }}
             }
           },
           {
@@ -126,13 +137,14 @@
             "key": "From",
             "data": {
               {% if source.source_type in ["Org-Controlled","User-Controlled","Web3","Safe{Wallet}"] %}
-              "label": {{ source.from_address_label | toString }},
+              "label": {{ show_info.from_address_label | toString }},
               "value": {{ source.address | toString }}
               {% elif source.source_type in ["Asset","Main","Sub"] %}
-              "value": {{ wallet_name | toString }}
+              "value": {{ show_info.wallet_name | toString }}
               {% endif %}
             }
           },
+          {% if destination.get("account_output") %}
           {
             "_component_type": "text",
             "_style": {
@@ -145,14 +157,15 @@
             ],
             "key": "To",
             "data": {
-              "label": {{ destination.account_output.to_address_label | toString }},
-              {% if destination.account_output.memo %}
+              "label": {{ show_info.to_address_label | toString }},
+              {% if destination.account_output.get("memo") %}
               "value": {{ destination.account_output.address ~ "|" ~ destination.account_output.memo | toString }}
               {% else %}
               "value": {{ destination.account_output.address | toString }}
               {% endif %}
             }
           }
+          {% endif %}
         ]
       },
       {
@@ -176,8 +189,8 @@
             "data": {
               "value": {{ (fee.fee_used ~ " " ~ fee.token_id) | toString }}
             }
-          },
-          {% if fee.max_fee_amount %}
+          }
+          {% if fee.get("max_fee_amount") %},
           {
             "_component_type": "text",
             "key": "Max Fee",
