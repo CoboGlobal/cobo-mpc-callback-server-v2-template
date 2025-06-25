@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"sort"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/nikolalohinski/gonja/v2"
@@ -113,6 +114,33 @@ func getGonjaFilters() map[string]exec.FilterFunction {
 	}
 }
 
+func getGonjaDictMethods() *exec.MethodSet[map[string]interface{}] {
+	return exec.NewMethodSet[map[string]interface{}](map[string]exec.Method[map[string]interface{}]{
+		// keys method is builtins method defined in https://github.com/NikolaLohinski/gonja/blob/master/builtins/methods/dict.go#L9
+		"keys": func(self map[string]interface{}, selfValue *exec.Value, arguments *exec.VarArgs) (interface{}, error) {
+			if err := arguments.Take(); err != nil {
+				return nil, exec.ErrInvalidCall(err)
+			}
+			keys := make([]string, 0)
+			for key := range self {
+				keys = append(keys, key)
+			}
+			sort.Strings(keys)
+			return keys, nil
+		},
+		"get": func(self map[string]interface{}, selfValue *exec.Value, arguments *exec.VarArgs) (interface{}, error) {
+			if len(arguments.Args) != 1 {
+				return nil, exec.ErrInvalidCall(fmt.Errorf("get method expects exactly 1 argument, got %d", len(arguments.Args)))
+			}
+			key, ok := arguments.Args[0].Interface().(string)
+			if !ok {
+				return nil, exec.ErrInvalidCall(fmt.Errorf("get method expects string key"))
+			}
+			return self[key], nil
+		},
+	})
+}
+
 func (s *StatementBuilder) Build(bizData string) (string, error) {
 	var data map[string]interface{}
 	if err := json.Unmarshal([]byte(bizData), &data); err != nil {
@@ -147,13 +175,18 @@ func getGonjaTemplate(source string) (*exec.Template, error) {
 	// Merge with default filters using Update method
 	filterSet := gonja.DefaultEnvironment.Filters.Update(customFilterSet)
 
+	methods := gonja.DefaultEnvironment.Methods
+
+	// Get custom dict methods to the methods
+	methods.Dict = getGonjaDictMethods()
+
 	// Create environment with merged filters and methods
 	env := &exec.Environment{
 		Context:           gonja.DefaultEnvironment.Context,
 		Filters:           filterSet,
 		ControlStructures: gonja.DefaultEnvironment.ControlStructures,
 		Tests:             gonja.DefaultEnvironment.Tests,
-		Methods:           gonja.DefaultEnvironment.Methods,
+		Methods:           methods,
 	}
 
 	sourceBytes := []byte(source)
