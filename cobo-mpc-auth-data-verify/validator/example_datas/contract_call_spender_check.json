@@ -1,0 +1,47 @@
+{
+    "action": "Contract Call",
+    "transaction_id": "2ed8c173-3d1b-49d1-9621-46e35d20ee92",
+    "wallet_id": "104fbf43-27b1-47f0-ae5c-dbe141bcfe27",
+    "status": "Completed",
+    "initiator_type": "App",
+    "source": {
+        "source_type": "Org-Controlled",
+        "wallet_id": "104fbf43-27b1-47f0-ae5c-dbe141bcfe27",
+        "address": "0x2cd10724333e1ff21ca8ba5a3a2042cfae71e390",
+        "from_address_label": "ini-address"
+    },
+    "destination": {
+        "destination_type": "Address",
+        "account_output": {
+            "address": "0xd6d15f37737b6f67d15388bf77269a4387e41fe8",
+            "amount": "30",
+            "memo": null,
+            "to_address_label": "whitelist addr"
+        }
+    },
+    "request_id": "Swap-Broker-Custodial-Payback-Transfer-eede2929-82de-4ec3-8ca2-c79b50715654",
+    "fee": {
+        "fee_type": "Fixed",
+        "token_id": "BSC_BNB",
+        "fee_used": "0",
+        "estimated_fee_used": null,
+        "max_fee_amount": "1",
+        "token_symbol": "BNB"
+    },
+    "chain": "Ethererum",
+    "decode": "{\"address\":\"0x65ea1489741A5D72fFdD8e6485B216bBdcC15Af3\"}",
+    "raw_calldata": "xxx000xxx",
+    "initiator": "lzhang@cobo.com",
+    "transaction_hash": "L9912a18198baf148a03232d9b2ea412",
+    "org_id": "f926907c-8141-4cc2-9d12-7808590e2167",
+    "wallet_name": "zc-bitget-test",
+    "org_name": "Cobo",
+    "environment": "Prod",
+    "created_time": 1750831133,
+    "expired_time": 1750832933,
+    "statement_uuid": "eede2929-82de-4ec3-8ca2-c79b50715654",
+    "header_title": "Transaction: Approver Approval",
+    "token_id": "BSC_USDT",
+    "template_version": "1.0.0"
+  }
+  
