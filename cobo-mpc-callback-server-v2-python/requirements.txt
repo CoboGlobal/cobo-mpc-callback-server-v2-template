@@ -1,5 +1,5 @@
 cryptography==44.0.1
-Flask==3.1.0
+Flask==3.1.1
 PyJWT==2.10.1
 PyYAML==6.0.2
 cobo-waas2==1.15.0
