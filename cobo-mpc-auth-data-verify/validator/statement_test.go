@@ -32,14 +32,15 @@ func TestRenderTemplate(t *testing.T) {
 
 func TestBuildStatementV2(t *testing.T) {
 	bizKeys := []string{
-		// "mfa_create_transaction_policy",
-		// "transaction",
+		"mfa_create_transaction_policy",
 		"withdraw_approver_approval",
 		"withdraw_spender_check",
 		"contract_call_approver_approval",
 		"contract_call_spender_check",
 		"sign_message_approver_approval",
 		"sign_message_spender_check",
+		"transaction_contractcall",
+		//"transaction",
 	}
 	for _, bizKey := range bizKeys {
 		data, err := getBizData(bizKey)
@@ -52,15 +53,16 @@ func TestBuildStatementV2(t *testing.T) {
 		s := NewStatementBuilder(templateContent)
 		message, err := s.Build(data)
 		assert.NoError(t, err)
+		//fmt.Printf("bizKey:\n %s\n", bizKey)
 		//fmt.Printf("Data:\n %s\n", data)
-		//fmt.Printf("bizKey: %s, Message:\n %s\n", bizKey, message)
+		//fmt.Printf("Message:\n %s\n", message)
 
 		message2, err := getMessage(bizKey)
 		assert.NoError(t, err)
 
 		got, gotDiff := CompareStatementMessage(message, message2)
 		if got != true {
-			t.Errorf("CompareStatementMessage() got = %v, want %v", got, true)
+			t.Errorf("key: %s, CompareStatementMessage() got = %v, want %v", bizKey, got, true)
 		}
 		if gotDiff != "" {
 			t.Logf("gotDiff: %s", gotDiff)
@@ -75,7 +77,7 @@ func getBizData(bizKey string) (string, error) {
 		return "", fmt.Errorf("error getting current directory: %w", err)
 	}
 
-	dataDir := filepath.Join(currentDir, "example_datas")
+	dataDir := filepath.Join(currentDir, "test_datas", "biz_datas")
 	dataFile := fmt.Sprintf("%s.json", bizKey)
 	fullPath := filepath.Join(dataDir, dataFile)
 
@@ -95,8 +97,8 @@ func getMessage(bizKey string) (string, error) {
 		return "", fmt.Errorf("error getting current directory: %w", err)
 	}
 
-	messageDir := filepath.Join(currentDir, "example_datas", "messages")
-	messageFile := fmt.Sprintf("%s_message.json", bizKey)
+	messageDir := filepath.Join(currentDir, "test_datas", "messages")
+	messageFile := fmt.Sprintf("%s.json", bizKey)
 	fullPath := filepath.Join(messageDir, messageFile)
 
 	messageBytes, err := os.ReadFile(fullPath)
@@ -114,7 +116,7 @@ func getTemplateContent(bizKey string, version string) (string, error) {
 		return "", fmt.Errorf("error getting current directory: %w", err)
 	}
 
-	templateDir := filepath.Join(currentDir, "json_templates")
+	templateDir := filepath.Join(currentDir, "test_datas", "templates")
 	templateFile := fmt.Sprintf("%s_%s.json.j2", bizKey, version)
 	fullPath := filepath.Join(templateDir, templateFile)
 

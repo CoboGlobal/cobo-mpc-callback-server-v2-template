@@ -1,0 +1,41 @@
+{
+    "template_version": "0.0.1",
+    "header_title": "Delete Transaction Policy",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "initiator": "lzhang@cobo.com",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "policy_name": "Policy-for-MPC Wallets",
+    "policy_type": "Token Transfer",
+    "applicable_wallets": ["MPC", "Custodial / Asset", "SCW"],
+    "conditions": [
+        "Initiator:", "any API key initiates a transaction.",
+        "SpendingLimit:", "SOL_1INCH >1 SOL_1INCH per transaction."
+    ],
+    "action": "Approval Quorum",
+    "sub_action": "2 Approvals Required: John, Mike",
+    "tables": [
+        [
+            "#1",
+            "zyc_test"
+        ],
+        [
+            "#2",
+            "junlin_swap_test_0414"
+        ],
+        [
+            "#3",
+            "yangming staking app"
+        ],
+        [
+            "#4",
+            "yangming staking app1"
+        ],
+        [
+            "#5",
+            "yangming staking app3"
+        ]
+    ]
+}

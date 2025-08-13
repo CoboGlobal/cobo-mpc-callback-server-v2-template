@@ -129,14 +129,41 @@ func getGonjaDictMethods() *exec.MethodSet[map[string]interface{}] {
 			return keys, nil
 		},
 		"get": func(self map[string]interface{}, selfValue *exec.Value, arguments *exec.VarArgs) (interface{}, error) {
-			if len(arguments.Args) != 1 {
-				return nil, exec.ErrInvalidCall(fmt.Errorf("get method expects exactly 1 argument, got %d", len(arguments.Args)))
+			if len(arguments.Args) < 1 || len(arguments.Args) > 2 {
+				return nil, exec.ErrInvalidCall(fmt.Errorf("get method expects 1 or 2 arguments, got %d", len(arguments.Args)))
 			}
+
 			key, ok := arguments.Args[0].Interface().(string)
 			if !ok {
 				return nil, exec.ErrInvalidCall(fmt.Errorf("get method expects string key"))
 			}
-			return self[key], nil
+
+			// if key exists, return value
+			if value, exists := self[key]; exists {
+				return value, nil
+			}
+
+			// if key not exists and has default value, return default value
+			if len(arguments.Args) == 2 {
+				return arguments.Args[1].Interface(), nil
+			}
+
+			// if key not exists and no default value, return nil
+			return nil, nil
+		},
+		"items": func(self map[string]interface{}, selfValue *exec.Value, arguments *exec.VarArgs) (interface{}, error) {
+			if err := arguments.Take(); err != nil {
+				return nil, exec.ErrInvalidCall(err)
+			}
+			items := make([][]interface{}, 0)
+			for key, value := range self {
+				items = append(items, []interface{}{key, value})
+			}
+			// Sort by key for consistent output
+			sort.Slice(items, func(i, j int) bool {
+				return fmt.Sprintf("%v", items[i][0]) < fmt.Sprintf("%v", items[j][0])
+			})
+			return items, nil
 		},
 	})
 }

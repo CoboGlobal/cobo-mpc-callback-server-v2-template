@@ -1,0 +1,16 @@
+{
+    "template_version": "0.0.1",
+    "initiator": "lzhang@cobo.com",
+    "action": "Cancel Transaction",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "transaction_id": "478dd506-4c1f-49d2-9bad-526608edf637",
+    "transaction_type": "Withdraw",
+    "from_address": "TNniVkn1ebUDnbH4jF4ggKHCdVpNSgqB35",
+    "to_address": "TNniVkn1ebUDnbH4jF4ggKHCdVpNSgqB35",
+    "amount": "1.01234 ETH",
+    "network_fee": "0.00012 ETH"
+}

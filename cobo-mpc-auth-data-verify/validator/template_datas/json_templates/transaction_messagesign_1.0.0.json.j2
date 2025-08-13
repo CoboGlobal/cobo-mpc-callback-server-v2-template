@@ -1,0 +1,167 @@
+{
+  "_theme": "structured",
+  "_biz_version": {{ template_version | toString }},
+  {% if is_for_sign %}
+  "_post_actions": [
+    {
+        "type": "sign_message",
+        "data": {
+            "transaction_id": {{ transaction_id | toString }},
+            "transaction_type": {{ type | toString }}
+        }
+    }
+  ],
+  {% endif %}
+  "header": {
+    "title": {{ header_title | toString }},
+    "title_icon": ""
+  },
+  "body": {
+    "components": [
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Organization",
+            "data": {
+              "value": {{ show_info.org_name | toString }},
+              "label": {{ show_info.environment | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Source",
+            "data": {
+              "value": {{ show_info.wallet_name | toString }},
+              "label": {{ source.source_type | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Initiator",
+            "data": {
+              "value": {{ initiator | toString }}
+            }
+          },
+          {
+            "_component_type": "date_time",
+            "key": "Created Time",
+            "data": {
+              "value": {{ created_time | toInt }}
+            }
+          },
+          {% if expired_time %}
+          {
+            "_component_type": "date_time",
+            "key": "Expired Time",
+            "data": {
+              "value": {{ expired_time | toInt }}
+            }
+          },
+          {% endif %}
+          {
+            "_component_type": "text",
+            "key": "Message ID",
+            "data": {
+              "value": {{ statement_uuid | toString }}
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "key": "Transaction Type",
+            "data": {
+              "value": {{ type | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "Chain",
+            "data": {
+              "value": {{ chain_id | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_style": {
+              "is_highlighted": true,
+              "is_large_size": false,
+              "is_bold": false
+            },
+            "_actions": [
+              "copy"
+            ],
+            "key": "Transaction ID",
+            "data": {
+              "value": {{ transaction_id | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_style": {
+              "is_highlighted": true,
+              "is_large_size": false,
+              "is_bold": false
+            },
+            "_actions": [
+              "copy"
+            ],
+            "key": "Request ID",
+            "data": {
+              "value": {{ request_id | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_style": {
+              "is_highlighted": true,
+              "is_large_size": false,
+              "is_bold": false
+            },
+            "_actions": [
+              "copy"
+            ],
+            "key": "Signing Address",
+            "data": {
+              "label": {{ show_info.from_address_label | toString }},
+              "value": {{ source.address | toString }}
+            }
+          }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "paragraph",
+            "_actions": [
+              "copy"
+            ],
+            "key": "Message",
+            {% if destination.get("message") %}
+            "data": [{{ destination.message | toString }}]
+            {% elif destination.get("structured_data") %}
+            "data": [{{ destination.structured_data | toString }}]
+            {% elif destination.get("msg_hash") %}
+            "data": [{{ destination.msg_hash | toString }}]
+            {% elif destination.get("message_bip137") %}
+            "data": [{{ destination.message_bip137 | toString }}]
+            {% elif destination.get("message_bip322") %}
+            "data": [{{ destination.message_bip322 | toString }}]
+            {% elif destination.get("message_cosmos_adr36") %}
+            "data": [{{ destination.message_cosmos_adr36 | toString }}]
+            {% endif %}
+          }
+        ]
+      }
+    ]
+  }
+}

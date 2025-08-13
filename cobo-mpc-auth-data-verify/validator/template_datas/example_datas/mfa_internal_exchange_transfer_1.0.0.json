@@ -1,0 +1,15 @@
+{
+    "template_version": "0.0.1",
+    "initiator": "lzhang@cobo.com",
+    "action": "Internal Exchange Transfer",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "from_wallet": "Yichun Binance",
+    "from_wallet_type": "Binance, Main Account, Spot",
+    "to_wallet": "Yichun OKX",
+    "to_wallet_type": "OKX, Sub Account, Spot",
+    "amount": "1.01234 ETH"
+}

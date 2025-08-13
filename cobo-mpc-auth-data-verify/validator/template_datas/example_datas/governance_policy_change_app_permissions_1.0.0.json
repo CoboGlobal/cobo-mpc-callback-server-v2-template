@@ -1,0 +1,14 @@
+{
+    "template_version": "0.0.1",
+    "header_title": "Change App Permissions",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "initiator": "lzhang@cobo.com",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "app_name": "Batch Payouts",
+    "developer": "Cobo",
+    "wallets": ["Custodial Wallets / Asset Wallets / Default Wallet", "MPC Wallet"],
+    "permissions": ["Create MPC Vault (Organization-Controlled)", "Create MPC Holder Group (Organization-Controlled)", "Create MPC Wallets (Organization-Controlled)"]
+}

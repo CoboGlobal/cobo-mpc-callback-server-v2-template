@@ -1,0 +1,16 @@
+{
+    "template_version": "0.0.1",
+    "header_title": "Delete API Key",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "initiator": "lzhang@cobo.com",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "name": "XXXkey",
+    "key": "5ecad3b4ebfccb94fc449df520ba41578391b3d9e070df6b247e458eead0a788",
+    "user_roles": ["API_Spender", "API_Viewer"],
+    "wallets": ["Custodial Wallets / Asset Wallets / Default Wallet", "MPC Wallet"],
+    "callback_endpoint": "--",
+    "ip_whitelist": "192.168.0.1"
+}
