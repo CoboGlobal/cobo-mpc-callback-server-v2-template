@@ -1,13 +1,13 @@
 module github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify
 
-go 1.23.0
+go 1.24.4
 
-toolchain go1.23.8
+toolchain go1.24.6
 
 require (
 	github.com/CoboGlobal/cobo-waas2-go-sdk v1.16.0
 	github.com/google/go-cmp v0.7.0
-	github.com/nikolalohinski/gonja/v2 v2.3.4
+	github.com/nikolalohinski/gonja/v2 v2.3.5
 	github.com/test-go/testify v1.1.4
 )
 

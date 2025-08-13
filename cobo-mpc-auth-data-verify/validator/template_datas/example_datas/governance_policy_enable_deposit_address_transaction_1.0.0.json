@@ -1,0 +1,13 @@
+{
+    "template_version": "0.0.1",
+    "header_title": "Enable deposit address transactions",
+    "action": "Enable deposit address transactions",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "initiator": "lzhang@cobo.com",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "wallet_name": "default wallet",
+    "wallet_type": "Web3"
+}

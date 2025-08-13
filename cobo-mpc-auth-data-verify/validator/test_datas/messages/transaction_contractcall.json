@@ -1,0 +1,179 @@
+{
+    "_theme": "structured",
+    "_biz_version": "1.0.0",
+    "_post_actions": [
+      {
+        "type": "sign_message",
+        "data": {
+          "transaction_id": "95481f0c-9925-4b07-a135-4aeb3ecff99b",
+          "transaction_type": "ContractCall"
+        }
+      }
+    ],
+    "header": {
+      "title": "Transaction: Sign Transaction",
+      "title_icon": ""
+    },
+    "body": {
+      "components": [
+        {
+          "_component_type": "section",
+          "components": [
+            {
+              "_component_type": "text",
+              "_is_in_list": true,
+              "key": "Organization",
+              "data": {
+                "value": "tokenization_test",
+                "label": "SANDBOX"
+              }
+            },
+            {
+              "_component_type": "text",
+              "_is_in_list": true,
+              "key": "Source",
+              "data": {
+                "value": "Default wallet 08547",
+                "label": "Org-Controlled"
+              }
+            },
+            {
+              "_component_type": "text",
+              "_is_in_list": true,
+              "key": "Initiator",
+              "data": {
+                "value": "Tokenization"
+              }
+            },
+            {
+              "_component_type": "date_time",
+              "key": "Created Time",
+              "data": {
+                "value": 1754898646
+              }
+            },
+            {
+              "_component_type": "text",
+              "key": "Message ID",
+              "data": {
+                "value": "4281c0b1-5ee8-43da-81d8-a27fa3fdbbb9"
+              }
+            }
+          ]
+        },
+        {
+          "_component_type": "section",
+          "components": [
+            {
+              "_component_type": "text",
+              "key": "Transaction Type",
+              "data": {
+                "value": "ContractCall"
+              }
+            },
+            {
+              "_component_type": "text",
+              "key": "Chain",
+              "data": {
+                "value": "SOLDEV_SOL"
+              }
+            },
+            {
+              "_component_type": "text",
+              "_style": {
+                "is_highlighted": true,
+                "is_large_size": false,
+                "is_bold": false
+              },
+              "_actions": ["copy"],
+              "key": "Transaction ID",
+              "data": {
+                "value": "95481f0c-9925-4b07-a135-4aeb3ecff99b"
+              }
+            },
+            {
+              "_component_type": "text",
+              "_style": {
+                "is_highlighted": true,
+                "is_large_size": false,
+                "is_bold": false
+              },
+              "_actions": ["copy"],
+              "key": "Request ID",
+              "data": {
+                "value": "44c2f1f85f4544febb18eb8813f5ce6e"
+              }
+            }
+          ]
+        },
+        {
+          "_component_type": "section",
+          "components": [
+            {
+              "_component_type": "text",
+              "_style": {
+                "is_highlighted": true,
+                "is_large_size": false,
+                "is_bold": false
+              },
+              "_actions": ["copy"],
+              "key": "From",
+              "data": {
+                "label": "",
+                "value": "CtvWtBCUcw9zvkM4C5oks3kYEaJtCwQsJxcv5x1wExor"
+              }
+            },
+            {
+              "_component_type": "text",
+              "_style": {
+                "is_highlighted": true,
+                "is_large_size": false,
+                "is_bold": false
+              },
+              "_actions": ["copy"],
+              "key": "To/Interact with",
+              "data": {
+                "label": "",
+                "value": ""
+              }
+            }
+          ]
+        },
+        {
+          "_component_type": "section",
+          "components": [
+            {
+              "_component_type": "text",
+              "_style": {
+                "is_highlighted": false,
+                "is_large_size": true,
+                "is_bold": true
+              },
+              "key": "Value",
+              "data": {
+                "value": "0 SOLDEV_SOL"
+              }
+            },
+            {
+              "_component_type": "text",
+              "key": "Estimated Fee",
+              "data": {
+                "value": "0.000005 SOLDEV_SOL"
+              }
+            }
+          ]
+        },
+        {
+          "_component_type": "section",
+          "components": [
+            {
+              "_component_type": "paragraph",
+              "_actions": ["copy"],
+              "key": "Description",
+              "data": [""]
+            }
+          ]
+        }
+      ]
+    }
+  }

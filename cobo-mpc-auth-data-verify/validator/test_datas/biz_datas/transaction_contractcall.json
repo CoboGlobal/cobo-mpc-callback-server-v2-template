@@ -1,0 +1,107 @@
+{
+  "transaction_id": "95481f0c-9925-4b07-a135-4aeb3ecff99b",
+  "wallet_id": "d49731a4-6863-40b3-9340-b456b5dcb872",
+  "type": "ContractCall",
+  "status": "PendingAuthorization",
+  "initiator_type": "App",
+  "source": {
+    "source_type": "Org-Controlled",
+    "wallet_id": "d49731a4-6863-40b3-9340-b456b5dcb872",
+    "address": "CtvWtBCUcw9zvkM4C5oks3kYEaJtCwQsJxcv5x1wExor",
+    "included_utxos": null,
+    "excluded_utxos": null,
+    "signer_key_share_holder_group_id": null
+  },
+  "destination": {
+    "destination_type": "SOL_Contract",
+    "instructions": [
+      {
+        "accounts": [
+          {
+            "pubkey": "5zrKnRz83kfFhfaf6GVBZG1Q4bXyBmfrTpmZnAhGeA7W",
+            "is_signer": false,
+            "is_writable": true
+          },
+          {
+            "pubkey": "2MiZ9ELsHe8kv8RGwT6C1kmXbRD7JxwaTmDd8sX7qCEt",
+            "is_signer": false,
+            "is_writable": true
+          },
+          {
+            "pubkey": "CtvWtBCUcw9zvkM4C5oks3kYEaJtCwQsJxcv5x1wExor",
+            "is_signer": true,
+            "is_writable": true
+          }
+        ],
+        "data": "DwBQOSeMBAAABg==",
+        "program_id": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+      }
+    ]
+  },
+  "created_timestamp": 1754898632015,
+  "updated_timestamp": 1754898641514,
+  "cobo_id": "20250811155031000371447000009971",
+  "request_id": "44c2f1f85f4544febb18eb8813f5ce6e",
+  "sub_status": "PendingRiskControlCheck",
+  "failed_reason": null,
+  "chain_id": "SOLDEV_SOL",
+  "token_id": "SOLDEV_SOL",
+  "asset_id": "SOLDEV",
+  "result": null,
+  "fee": {
+    "fee_type": "EVM_Legacy",
+    "token_id": "SOLDEV_SOL",
+    "fee_used": "0",
+    "estimated_fee_used": "0.000005",
+    "gas_used": null,
+    "gas_price": "5000",
+    "gas_limit": "1"
+  },
+  "initiator": "Tokenization",
+  "confirmed_num": null,
+  "confirming_threshold": 1,
+  "transaction_hash": null,
+  "block_info": null,
+  "raw_tx_info": null,
+  "replacement": null,
+  "fueling_info": null,
+  "category": [],
+  "cobo_category": ["Tokenization"],
+  "description": "",
+  "is_loop": false,
+  "extra": null,
+  "timeline": [
+    {
+      "status": "Submitted",
+      "finished": true,
+      "finished_timestamp": 1754898632000,
+      "sub_status": ""
+    },
+    {
+      "status": "PendingScreening",
+      "finished": true,
+      "finished_timestamp": 1754898632034,
+      "sub_status": ""
+    },
+    {
+      "status": "PendingAuthorization",
+      "finished": false,
+      "finished_timestamp": null,
+      "sub_status": ""
+    }
+  ],
+  "show_info": {
+    "org_name": "tokenization_test",
+    "wallet_name": "Default wallet 08547",
+    "environment": "SANDBOX",
+    "from_address_label": "",
+    "to_address_label": "",
+    "total_amount": 0.0
+  },
+  "header_title": "Transaction: Sign Transaction",
+  "is_for_sign": true,
+  "statement_uuid": "4281c0b1-5ee8-43da-81d8-a27fa3fdbbb9",
+  "created_time": 1754898646,
+  "expired_time": 0,
+  "template_version": "1.0.0"
+}

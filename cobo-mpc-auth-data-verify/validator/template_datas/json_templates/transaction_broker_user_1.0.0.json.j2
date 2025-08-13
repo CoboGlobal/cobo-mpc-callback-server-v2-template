@@ -1,0 +1,69 @@
+{
+  "_theme": "structured",
+  "_biz_version": {{ template_version | toString }},
+  "header": {
+    "title": "[Transaction Review] Please confirm the details",
+    "title_icon": ""
+  },
+  "body": {
+    "components": [
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "text",
+            "_is_in_list": true,
+            "key": "Request ID",
+            "data": {
+              "value": {{ request_id | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "From",
+            "data": {
+              "value": {{ source.address | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "To/Interact with",
+            "data": {
+              "value": {{ destination.account_output.address | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "Amount",
+            "data": {
+              "value": {{ (destination.account_output.amount ~ " " ~ token_id) | toString }}
+            }
+          },
+          {
+            "_component_type": "date_time",
+            "key": "Created Time",
+            "data": {
+              "value": {{ created_timestamp / 1000 | toInt }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "key": "Estimated Fee",
+            "data": {
+              "value": {{ (fee.estimated_fee_used ~ " " ~ fee.token_id) | toString }}
+            }
+          }
+          {% if fee.get("max_fee_amount") %},
+          {
+            "_component_type": "text",
+            "key": "Max Fee",
+            "data": {
+              "value": {{ (fee.max_fee_amount ~ " " ~ fee.token_id) | toString }}
+            }
+          }
+          {% endif %}
+        ]
+      }
+    ]
+  }
+}
