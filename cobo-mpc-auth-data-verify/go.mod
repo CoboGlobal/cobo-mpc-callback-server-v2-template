@@ -5,7 +5,7 @@ go 1.24.4
 toolchain go1.24.6
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.16.0
+	github.com/CoboGlobal/cobo-waas2-go-api v0.0.0-00010101000000-000000000000
 	github.com/google/go-cmp v0.7.0
 	github.com/nikolalohinski/gonja/v2 v2.3.5
 	github.com/test-go/testify v1.1.4
@@ -31,3 +31,5 @@ require (
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.24.0 // indirect
 )
+
+replace github.com/CoboGlobal/cobo-waas2-go-api => code.1cobo.com/cobo-waas2-go-api.git v0.0.0-20250821054630-dbbd4956c4a8

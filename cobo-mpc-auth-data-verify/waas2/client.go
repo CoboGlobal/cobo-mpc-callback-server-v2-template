@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
-	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
-	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-api/waas2/crypto"
 )
 
 type Client struct {
@@ -15,12 +16,12 @@ type Client struct {
 	client *coboWaas2.APIClient
 }
 
-func NewClient(apiSecret string) *Client {
+func NewClient(apiSecret string, env int) *Client {
 	configuration := coboWaas2.NewConfiguration()
 	client := coboWaas2.NewAPIClient(configuration)
 
 	return &Client{
-		env: coboWaas2.DevEnv,
+		env: env,
 		signer: crypto.Ed25519Signer{
 			Secret: apiSecret,
 		},
@@ -35,12 +36,15 @@ func (c *Client) createContext(ctx context.Context) context.Context {
 	return ctx
 }
 
-func (c *Client) GetTransactionApprovalDetail(ctx context.Context, transactionId string) (*coboWaas2.TransactionApprovalDetail, error) {
+func (c *Client) ListTransactions(ctx context.Context, transactionIds []string) ([]coboWaas2.Transaction, error) {
 	ctx = c.createContext(ctx)
 
-	resp, r, err := c.client.TransactionsAPI.GetTransactionApprovalDetail(ctx, transactionId).Execute()
+	req := c.client.TransactionsAPI.ListTransactions(ctx)
+	req = req.TransactionIds(strings.Join(transactionIds, ","))
+
+	resp, r, err := req.Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `WalletsAPI.CreateWallet``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `.TransactionsAPI.ListTransactions``: %v\n", err)
 		if apiErr, ok := err.(*coboWaas2.GenericOpenAPIError); ok {
 			fmt.Fprintf(os.Stderr, "Error response: %s\n", string(apiErr.Body()))
 		}
@@ -48,5 +52,44 @@ func (c *Client) GetTransactionApprovalDetail(ctx context.Context, transactionId
 		return nil, err
 	}
 
+	return resp.Data, nil
+}
+
+func (c *Client) ListTransactionApprovalDetails(ctx context.Context, transactionIds []string) ([]coboWaas2.ApprovalDetail, error) {
+	ctx = c.createContext(ctx)
+
+	req := c.client.TransactionsAPI.ListApprovalDetails(ctx)
+	req = req.TransactionIds(strings.Join(transactionIds, ","))
+	resp, r, err := req.Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `.TransactionsAPI.ListApprovalDetails``: %v\n", err)
+		if apiErr, ok := err.(*coboWaas2.GenericOpenAPIError); ok {
+			fmt.Fprintf(os.Stderr, "Error response: %s\n", string(apiErr.Body()))
+		}
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+		return nil, err
+	}
 	return resp, nil
+}
+
+func (c *Client) ListTransactionTemplates(ctx context.Context, templateNames []TemplateName) ([]coboWaas2.ApprovalTemplate, error) {
+	ctx = c.createContext(ctx)
+	templates := make([]coboWaas2.ApprovalTemplate, 0)
+	for _, templateName := range templateNames {
+		req := c.client.TransactionsAPI.ListTransactionTemplates(ctx)
+		req = req.TemplateKey(templateName.TemplateKey)
+		req = req.TemplateVersion(templateName.TemplateVersion)
+		resp, r, err := req.Execute()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error when calling `TransactionsAPI.ListTransactionTemplates``: %v\n", err)
+			if apiErr, ok := err.(*coboWaas2.GenericOpenAPIError); ok {
+				fmt.Fprintf(os.Stderr, "Error response: %s\n", string(apiErr.Body()))
+			}
+			fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+			return nil, err
+		}
+		templates = append(templates, resp...)
+	}
+
+	return templates, nil
 }

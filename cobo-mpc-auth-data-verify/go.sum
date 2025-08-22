@@ -1,5 +1,5 @@
-github.com/CoboGlobal/cobo-waas2-go-sdk v1.16.0 h1:QuLJzMx/gIkI2jGmtQ+9A292kWFlrW5SZMpD2qhxSm4=
-github.com/CoboGlobal/cobo-waas2-go-sdk v1.16.0/go.mod h1:a355LlDmGbYcDqzdGyebZ5PmtNS/5cYNUPPpkJo5p10=
+code.1cobo.com/cobo-waas2-go-api.git v0.0.0-20250821054630-dbbd4956c4a8 h1:nTZlvegbca1gSu4GNO69SGMgh8wF9iSoi2VciTCTMOg=
+code.1cobo.com/cobo-waas2-go-api.git v0.0.0-20250821054630-dbbd4956c4a8/go.mod h1:gfFZhOHg8PX8M0fUarNppXWci60ZoQMGE2YVLUyUuCg=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/btcsuite/btcd/btcec/v2 v2.3.4 h1:3EJjcN70HCu/mwqlUsGK8GcNVyLVxFDlWurTXGPFfiQ=
