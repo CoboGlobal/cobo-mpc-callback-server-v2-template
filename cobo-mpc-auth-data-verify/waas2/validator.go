@@ -2,51 +2,81 @@ package waas2
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/validator"
 	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
 )
 
-func VerifyTxApprovalDetails(ctx context.Context, txApprovalDetails []*TransactionApprovalDetail) error {
-	for i, txApprovalDetail := range txApprovalDetails {
-		if txApprovalDetail.TransactionId == "" {
-			return fmt.Errorf("txApprovalDetail index %d transaction id is empty", i)
-		}
+type TxApprovalDetail struct {
+	TransactionId  string
+	Transaction    *coboWaas2.Transaction
+	ApprovalDetail *coboWaas2.ApprovalDetail
+	Templates      []coboWaas2.ApprovalTemplate
+}
+type Config struct {
+	PubkeyWhitelist []string
+}
 
-		if txApprovalDetail.Transaction == nil {
-			return fmt.Errorf("txApprovalDetail index %d tx id %s transaction is nil", i, txApprovalDetail.TransactionId)
-		}
+type Validator interface {
+	Verify(ctx context.Context) error
+}
 
-		if txApprovalDetail.ApprovalDetail == nil {
-			return fmt.Errorf("txApprovalDetail index %d tx id %s approval detail is nil", i, txApprovalDetail.TransactionId)
-		}
+type TxApprovalDetailValidator struct {
+	tad    *TxApprovalDetail
+	config *Config
+}
 
-		if txApprovalDetail.Templates == nil {
-			return fmt.Errorf("txApprovalDetail index %d tx id %s templates is nil", i, txApprovalDetail.TransactionId)
-		}
+func NewTxApprovalDetailValidator(tad *TxApprovalDetail, config *Config) *TxApprovalDetailValidator {
+	return &TxApprovalDetailValidator{
+		tad:    tad,
+		config: config,
+	}
+}
 
-		err := verifyTxApprovalDetail(ctx, txApprovalDetail)
-		if err != nil {
-			return fmt.Errorf("txApprovalDetail index %d tx id %s failed to verify: %w", i, txApprovalDetail.TransactionId, err)
-		}
+func (t *TxApprovalDetailValidator) Verify(ctx context.Context) error {
+	if t.tad == nil {
+		return fmt.Errorf("txApprovalDetail is nil")
+	}
+
+	if t.tad.TransactionId == "" {
+		return fmt.Errorf("txApprovalDetail transaction id is empty")
+	}
+
+	if t.tad.Transaction == nil {
+		return fmt.Errorf("txApprovalDetail transaction is nil")
+	}
+
+	if t.tad.ApprovalDetail == nil {
+		return fmt.Errorf("txApprovalDetail approval detail is nil")
+	}
+
+	if t.tad.Templates == nil {
+		return fmt.Errorf("txApprovalDetail templates is nil")
+	}
+
+	err := t.verifyTxApprovalDetail(ctx)
+	if err != nil {
+		return fmt.Errorf("txApprovalDetail failed to verify: %w", err)
 	}
 	return nil
 }
 
-func verifyTxApprovalDetail(ctx context.Context, txApprovalDetail *TransactionApprovalDetail) error {
-	approvalDetail := txApprovalDetail.ApprovalDetail
-	transaction := txApprovalDetail.Transaction
+func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) error {
+	approvalDetail := t.tad.ApprovalDetail
+	transaction := t.tad.Transaction
 
 	if approvalDetail.TransactionId != nil && *approvalDetail.TransactionId != transaction.TransactionId {
-		return fmt.Errorf("tx %s transaction id is not equal to approval detail transaction id", txApprovalDetail.TransactionId)
+		return fmt.Errorf("tx %s transaction id is not equal to approval detail transaction id", t.tad.TransactionId)
 	}
 
 	transactionType := strings.ToLower(string(*transaction.Type))
 
 	handleUserDetails := func(templateKey string, userDetails []coboWaas2.ApprovalUserDetail) error {
-		approveCount, err := verifyUserDetails(templateKey, userDetails, txApprovalDetail)
+		approveCount, err := t.verifyUserDetails(templateKey, userDetails)
 		if err != nil {
 			return fmt.Errorf("txApprovalDetail failed to verify user details: %w", err)
 		}
@@ -97,10 +127,8 @@ func verifyTxApprovalDetail(ctx context.Context, txApprovalDetail *TransactionAp
 	return nil
 }
 
-func verifyUserDetails(templateKey string, userDetails []coboWaas2.ApprovalUserDetail, txApprovalDetail *TransactionApprovalDetail) (int, error) {
-
+func (t *TxApprovalDetailValidator) verifyUserDetails(templateKey string, userDetails []coboWaas2.ApprovalUserDetail) (int, error) {
 	approveCount := 0
-
 	for i, userDetail := range userDetails {
 		if userDetail.Pubkey == nil {
 			return 0, fmt.Errorf("userDetail index %d pubkey is nil", i)
@@ -118,7 +146,7 @@ func verifyUserDetails(templateKey string, userDetails []coboWaas2.ApprovalUserD
 			return 0, fmt.Errorf("userDetail index %d template version is nil", i)
 		}
 
-		authResult, err := verifyUserDetail(templateKey, userDetail, txApprovalDetail)
+		authResult, err := t.verifyUserDetail(templateKey, userDetail)
 		if err != nil {
 			return 0, fmt.Errorf("userDetails index %d failed to verify user detail: %w", i, err)
 		}
@@ -130,9 +158,9 @@ func verifyUserDetails(templateKey string, userDetails []coboWaas2.ApprovalUserD
 	return approveCount, nil
 }
 
-func verifyUserDetail(templateKey string, userDetail coboWaas2.ApprovalUserDetail, txApprovalDetail *TransactionApprovalDetail) (bool, error) {
+func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDetail coboWaas2.ApprovalUserDetail) (bool, error) {
 	// get Template
-	templates := txApprovalDetail.Templates
+	templates := t.tad.Templates
 	authTemplate := ""
 	found := false
 	for _, template := range templates {
@@ -152,12 +180,21 @@ func verifyUserDetail(templateKey string, userDetail coboWaas2.ApprovalUserDetai
 	}
 
 	// get biz data
+	bizData, err := buildBizData(t.tad.Transaction, userDetail)
+	if err != nil {
+		return false, fmt.Errorf("failed to merge transaction and user detail: %w", err)
+	}
 
 	// get auth result
 	authResult := int(*userDetail.Result)
 
 	// get pubkey
 	pubkey := *userDetail.Pubkey
+	if t.config != nil && t.config.PubkeyWhitelist != nil {
+		if !slices.Contains(t.config.PubkeyWhitelist, pubkey) {
+			return false, fmt.Errorf("pubkey %s is not in whitelist", pubkey)
+		}
+	}
 
 	// get signature
 	signature := *userDetail.Signature
@@ -167,17 +204,52 @@ func verifyUserDetail(templateKey string, userDetail coboWaas2.ApprovalUserDetai
 
 	authData := &validator.AuthData{
 		Template:  authTemplate,
-		BizData:   "",
+		BizData:   bizData,
 		Result:    authResult,
 		Pubkey:    pubkey,
 		Signature: signature,
 		Message:   message,
 	}
 	authValidator := validator.NewAuthValidator(authData)
-	err := authValidator.VerifyAuthData()
+	err = authValidator.VerifyAuthData()
 	if err != nil {
 		return false, fmt.Errorf("failed to verify user detail: %w", err)
 	}
 
 	return authResult == int(coboWaas2.APPROVALRESULT_APPROVED), nil
+}
+
+// buildBizData merges the properties of Transaction and ApprovalUserDetail into a single JSON string
+func buildBizData(transaction *coboWaas2.Transaction, userDetail coboWaas2.ApprovalUserDetail) (string, error) {
+	// Create a map to hold the merged data
+	mergedData := make(map[string]interface{})
+
+	// Add transaction properties
+	if transaction != nil {
+		// Convert transaction to map
+		txMap, err := transaction.ToMap()
+		if err != nil {
+			return "", fmt.Errorf("failed to convert transaction to map: %w", err)
+		}
+
+		// Add transaction properties with "tx_" prefix to avoid conflicts
+		for key, value := range txMap {
+			mergedData[key] = value
+		}
+	}
+	userDetailMap, err := userDetail.ToMap()
+	if err != nil {
+		return "", fmt.Errorf("failed to convert user detail to map: %w", err)
+	}
+	for key, value := range userDetailMap {
+		mergedData[key] = value
+	}
+
+	// Convert merged data to JSON string
+	jsonData, err := json.Marshal(mergedData)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal merged data to JSON: %w", err)
+	}
+
+	return string(jsonData), nil
 }

@@ -8,15 +8,8 @@ import (
 	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
 )
 
-type Getter interface {
-	ListTransactionAndApprovalDetails(ctx context.Context, transactionIds []string) ([]*TransactionApprovalDetail, error)
-}
-
-type TransactionApprovalDetail struct {
-	TransactionId  string
-	Transaction    *coboWaas2.Transaction
-	ApprovalDetail *coboWaas2.ApprovalDetail
-	Templates      []coboWaas2.ApprovalTemplate
+type ApproverDetailBuilder interface {
+	Build(ctx context.Context, transactionIds []string) ([]*TransactionApprovalDetail, error)
 }
 
 type TemplateName struct {
@@ -25,7 +18,7 @@ type TemplateName struct {
 }
 
 type Waas2 struct {
-	client           *Client
+	client           Getter
 	templateMapCache map[string]coboWaas2.ApprovalTemplate
 }
 
@@ -39,7 +32,7 @@ func getTemplateKey(templateName TemplateName) string {
 	return templateName.TemplateKey + "_" + templateName.TemplateVersion
 }
 
-func (w *Waas2) ListTransactionAndApprovalDetails(ctx context.Context, transactionIds []string) ([]*TransactionApprovalDetail, error) {
+func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TransactionApprovalDetail, error) {
 	txApprovalDetails := make([]*TransactionApprovalDetail, len(transactionIds))
 
 	txs, err := w.client.ListTransactions(ctx, transactionIds)

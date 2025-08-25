@@ -53,5 +53,5 @@ func getAuthData(transactionID string) (*validator.AuthData, error) {
 }
 
 func verifyAuthData(authData *validator.AuthData) error {
-	return validator.NewAuthValidator(authData).Verify()
+	return validator.NewAuthValidator(authData).VerifyAuthData()
 }

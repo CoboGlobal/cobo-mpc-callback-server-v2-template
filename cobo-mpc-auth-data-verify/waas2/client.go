@@ -10,6 +10,12 @@ import (
 	"github.com/CoboGlobal/cobo-waas2-go-api/waas2/crypto"
 )
 
+type Getter interface {
+	ListTransactions(ctx context.Context, transactionIds []string) ([]coboWaas2.Transaction, error)
+	ListTransactionApprovalDetails(ctx context.Context, transactionIds []string) ([]coboWaas2.ApprovalDetail, error)
+	ListTransactionTemplates(ctx context.Context, templateNames []TemplateName) ([]coboWaas2.ApprovalTemplate, error)
+}
+
 type Client struct {
 	env    int
 	signer crypto.ApiSigner
