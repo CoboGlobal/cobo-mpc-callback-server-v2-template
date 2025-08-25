@@ -9,7 +9,7 @@ import (
 )
 
 type ApproverDetailBuilder interface {
-	Build(ctx context.Context, transactionIds []string) ([]*TransactionApprovalDetail, error)
+	Build(ctx context.Context, transactionIds []string) ([]*TxApprovalDetail, error)
 }
 
 type TemplateName struct {
@@ -32,8 +32,8 @@ func getTemplateKey(templateName TemplateName) string {
 	return templateName.TemplateKey + "_" + templateName.TemplateVersion
 }
 
-func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TransactionApprovalDetail, error) {
-	txApprovalDetails := make([]*TransactionApprovalDetail, len(transactionIds))
+func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TxApprovalDetail, error) {
+	txApprovalDetails := make([]*TxApprovalDetail, len(transactionIds))
 
 	txs, err := w.client.ListTransactions(ctx, transactionIds)
 	if err != nil {
