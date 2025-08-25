@@ -293,7 +293,7 @@ func TestAuthValidator_Verify(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			v := NewAuthValidator(tt.authData)
-			err := v.Verify()
+			err := v.VerifyAuthDataAndResult()
 
 			if tt.wantErr {
 				if err == nil {
