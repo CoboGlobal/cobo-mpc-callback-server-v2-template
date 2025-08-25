@@ -5,7 +5,8 @@ import (
 )
 
 type Validator interface {
-	Verify() error
+	VerifyAuthData() error
+	VerifyAuthDataAndResult() error
 }
 
 type AuthData struct {
@@ -27,7 +28,21 @@ func NewAuthValidator(authData *AuthData) *AuthValidator {
 	}
 }
 
-func (v *AuthValidator) Verify() error {
+func (v *AuthValidator) VerifyAuthDataAndResult() error {
+	err := v.VerifyAuthData()
+	if err != nil {
+		return fmt.Errorf("error verifying auth data: %w", err)
+	}
+
+	// step 4: verify result is approved
+	if v.authData.Result != 2 {
+		return fmt.Errorf("result is not approved(2): %d", v.authData.Result)
+	}
+
+	return nil
+}
+
+func (v *AuthValidator) VerifyAuthData() error {
 	if v.authData == nil {
 		return fmt.Errorf("auth data is nil")
 	}
@@ -51,11 +66,6 @@ func (v *AuthValidator) Verify() error {
 	err = sv.Verify()
 	if err != nil {
 		return fmt.Errorf("error verifying message: %w", err)
-	}
-
-	// step 3: verify result is approved
-	if v.authData.Result != 2 {
-		return fmt.Errorf("result is not approved(2): %d", v.authData.Result)
 	}
 
 	return nil

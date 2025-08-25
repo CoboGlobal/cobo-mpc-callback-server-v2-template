@@ -14,8 +14,8 @@ type Getter interface {
 
 type TransactionApprovalDetail struct {
 	TransactionId  string
-	Transaction    coboWaas2.Transaction
-	ApprovalDetail coboWaas2.ApprovalDetail
+	Transaction    *coboWaas2.Transaction
+	ApprovalDetail *coboWaas2.ApprovalDetail
 	Templates      []coboWaas2.ApprovalTemplate
 }
 
@@ -60,7 +60,7 @@ func (w *Waas2) ListTransactionAndApprovalDetails(ctx context.Context, transacti
 		found := false
 		for _, tx := range txs {
 			if tx.TransactionId == txId {
-				txApprovalDetails[i].Transaction = tx
+				txApprovalDetails[i].Transaction = &tx
 				found = true
 				break
 			}
@@ -72,7 +72,7 @@ func (w *Waas2) ListTransactionAndApprovalDetails(ctx context.Context, transacti
 		foundApprovalDetail := false
 		for _, approvalDetail := range approvalDetails {
 			if approvalDetail.TransactionId != nil && *approvalDetail.TransactionId == txId {
-				txApprovalDetails[i].ApprovalDetail = approvalDetail
+				txApprovalDetails[i].ApprovalDetail = &approvalDetail
 
 				if txApprovalDetails[i].Transaction.Type == nil {
 					return nil, fmt.Errorf("tx %s type is nil", txId)
