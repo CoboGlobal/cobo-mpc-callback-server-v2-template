@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/waas2"
-	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
 var (
@@ -13,15 +13,15 @@ var (
 		"",
 	}
 
-	testApiSecret = "7f7dd12c5c87594e5723b4baea26c9c2d18bd13784255020d00bc4856d8e8013"
-	env           = coboWaas2.DevEnv
+	apiSecret = ""
+	env       = coboWaas2.DevEnv
 )
 
 func main() {
 	// init waas2 client
 	transactionIds := []string{"mock_transaction_id"}
 
-	client := waas2.NewClient(testApiSecret, env)
+	client := waas2.NewClient(apiSecret, env)
 
 	waas2Client := waas2.NewWaas2(client)
 

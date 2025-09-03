@@ -6,18 +6,31 @@ import (
 	"fmt"
 	"testing"
 
-	waas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
-	"github.com/CoboGlobal/cobo-waas2-go-api/waas2/crypto"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
 	"github.com/test-go/testify/assert"
 )
 
-const testApiSecret = "7f7dd12c5c87594e5723b4baea26c9c2d18bd13784255020d00bc4856d8e8013"
+const (
+	testApiSecret       = ""
+	testTransactionId   = ""
+	testTemplateKey     = "withdrawal" // transaction type from transaction detail
+	testTemplateVersion = "1.0.0"      // template version from approval detail
+)
 
-// api key: ad8104b0e6f0a4e9ec7d3a60da138e9ee780cbb969ca522ca8d3ff4c9ac1c65d
-// api secret: 7f7dd12c5c87594e5723b4baea26c9c2d18bd13784255020d00bc4856d8e8013
+func TestListTransactions(t *testing.T) {
+	client := NewClient(testApiSecret, coboWaas2.DevEnv)
+	txs, err := client.ListTransactions(context.Background(), []string{testTransactionId})
+	if err != nil {
+		t.Fatalf("failed to get transactions: %v", err)
+	}
+	detailJson, err := json.MarshalIndent(txs, "", "  ")
+	fmt.Printf("transactions: %v\n", string(detailJson))
+}
+
 func TestListTransactionApprovalDetails(t *testing.T) {
-	client := NewClient(testApiSecret, waas2.DevEnv)
-	txApprovalDetail, err := client.ListTransactionApprovalDetails(context.Background(), []string{"383d10e7-8d3f-40c6-abec-e4ac36a2a998"})
+	client := NewClient(testApiSecret, coboWaas2.DevEnv)
+	txApprovalDetail, err := client.ListTransactionApprovalDetails(context.Background(), []string{testTransactionId})
 	if err != nil {
 		t.Fatalf("failed to get transaction approval detail: %v", err)
 	}
@@ -25,6 +38,16 @@ func TestListTransactionApprovalDetails(t *testing.T) {
 	detailJson, err := json.MarshalIndent(txApprovalDetail, "", "  ")
 	assert.NoError(t, err)
 	fmt.Printf("transaction approval detail: %v\n", string(detailJson))
+}
+
+func TestListTransactionTemplates(t *testing.T) {
+	client := NewClient(testApiSecret, coboWaas2.DevEnv)
+	txTemplates, err := client.ListTransactionTemplates(context.Background(), []TemplateName{{TemplateKey: testTemplateKey, TemplateVersion: testTemplateVersion}})
+	if err != nil {
+		t.Fatalf("failed to get transaction templates: %v", err)
+	}
+	detailJson, err := json.MarshalIndent(txTemplates, "", "  ")
+	fmt.Printf("transaction templates: %v\n", string(detailJson))
 }
 
 func TestCreateAPIKeys(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
-	"github.com/CoboGlobal/cobo-waas2-go-api/waas2/crypto"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
+	"github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2/crypto"
 )
 
 type Getter interface {

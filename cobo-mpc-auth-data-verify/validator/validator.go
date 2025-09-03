@@ -55,14 +55,19 @@ func (v *AuthValidator) VerifyAuthData() error {
 		return fmt.Errorf("error building statement: %w", err)
 	}
 
-	// step 2: verify statement message and build message are equal
-	equal, diff := CompareStatementMessage(buildMsg, v.authData.Message)
-	if !equal {
-		return fmt.Errorf("source message and build message are not equal: %s", diff)
+	originalMsg := v.authData.Message
+	if originalMsg == "" {
+		originalMsg = buildMsg
+	} else {
+		// step 2: verify statement message and build message are equal
+		equal, diff := CompareStatementMessage(buildMsg, originalMsg)
+		if !equal {
+			return fmt.Errorf("source message and build message are not equal: %s", diff)
+		}
 	}
 
 	// step 3: verify signature of message and result
-	sv := NewSignatureValidator(v.authData.Message, v.authData.Pubkey, v.authData.Signature, v.authData.Result)
+	sv := NewSignatureValidator(originalMsg, v.authData.Pubkey, v.authData.Signature, v.authData.Result)
 	err = sv.Verify()
 	if err != nil {
 		return fmt.Errorf("error verifying message: %w", err)

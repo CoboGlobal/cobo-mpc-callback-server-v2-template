@@ -234,7 +234,7 @@ func TestAuthValidator_Verify(t *testing.T) {
 				Message:   testMessage,
 			},
 			wantErr: true,
-			errMsg:  "failed to parse first statement message",
+			errMsg:  "compact rendered template failed",
 		},
 		{
 			name: "invalid biz data",

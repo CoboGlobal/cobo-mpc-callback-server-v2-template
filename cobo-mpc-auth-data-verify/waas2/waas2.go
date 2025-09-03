@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
 type ApproverDetailBuilder interface {
@@ -24,7 +24,8 @@ type Waas2 struct {
 
 func NewWaas2(client *Client) *Waas2 {
 	return &Waas2{
-		client: client,
+		client:           client,
+		templateMapCache: make(map[string]coboWaas2.ApprovalTemplate),
 	}
 }
 
@@ -32,8 +33,12 @@ func getTemplateKey(templateName TemplateName) string {
 	return templateName.TemplateKey + "_" + templateName.TemplateVersion
 }
 
+func businessKeyToTemplateKey(businessKey string) string {
+	return strings.TrimPrefix(businessKey, "transaction_")
+}
+
 func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TxApprovalDetail, error) {
-	txApprovalDetails := make([]*TxApprovalDetail, len(transactionIds))
+	txApprovalDetails := make([]*TxApprovalDetail, 0)
 
 	txs, err := w.client.ListTransactions(ctx, transactionIds)
 	if err != nil {
@@ -46,14 +51,16 @@ func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TxApprov
 	}
 
 	// set tx approval details
-	for i, txId := range transactionIds {
-		// set transaction id
-		txApprovalDetails[i].TransactionId = txId
+	for _, txId := range transactionIds {
+		// initialize the struct
+		newApprovalDetail := &TxApprovalDetail{
+			TransactionId: txId,
+		}
 
 		found := false
 		for _, tx := range txs {
 			if tx.TransactionId == txId {
-				txApprovalDetails[i].Transaction = &tx
+				newApprovalDetail.Transaction = &tx
 				found = true
 				break
 			}
@@ -65,19 +72,19 @@ func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TxApprov
 		foundApprovalDetail := false
 		for _, approvalDetail := range approvalDetails {
 			if approvalDetail.TransactionId != nil && *approvalDetail.TransactionId == txId {
-				txApprovalDetails[i].ApprovalDetail = &approvalDetail
+				newApprovalDetail.ApprovalDetail = &approvalDetail
 
-				if txApprovalDetails[i].Transaction.Type == nil {
+				if newApprovalDetail.Transaction.Type == nil {
 					return nil, fmt.Errorf("tx %s type is nil", txId)
 				}
 
-				transactionType := strings.ToLower(string(*txApprovalDetails[i].Transaction.Type))
+				transactionType := strings.ToLower(string(*newApprovalDetail.Transaction.Type))
 
-				templates, err := w.getTemplateByApprovalDetail(ctx, approvalDetail, transactionType)
+				templates, err := w.getTemplatesByApprovalDetail(ctx, approvalDetail, transactionType)
 				if err != nil {
 					return nil, fmt.Errorf("tx %s failed to get template by approval detail: %w", txId, err)
 				}
-				txApprovalDetails[i].Templates = templates
+				newApprovalDetail.Templates = templates
 				foundApprovalDetail = true
 				break
 			}
@@ -85,12 +92,13 @@ func (w *Waas2) Build(ctx context.Context, transactionIds []string) ([]*TxApprov
 		if !foundApprovalDetail {
 			return nil, fmt.Errorf("tx %s not found in approval details", txId)
 		}
+		txApprovalDetails = append(txApprovalDetails, newApprovalDetail)
 	}
 
 	return txApprovalDetails, nil
 }
 
-func (w *Waas2) getTemplateByApprovalDetail(ctx context.Context, approvalDetail coboWaas2.ApprovalDetail, transactionType string) ([]coboWaas2.ApprovalTemplate, error) {
+func (w *Waas2) getTemplatesByApprovalDetail(ctx context.Context, approvalDetail coboWaas2.ApprovalDetail, transactionType string) ([]coboWaas2.ApprovalTemplate, error) {
 	needAllTemplateList := make([]coboWaas2.ApprovalTemplate, 0)
 	needAllTemplateNameMap := make(map[string]TemplateName)
 	needFetchTemplateNameMap := make(map[string]TemplateName)
@@ -116,9 +124,9 @@ func (w *Waas2) getTemplateByApprovalDetail(ctx context.Context, approvalDetail 
 		}
 	}
 
-	if approvalDetail.BrokerUser != nil {
-		templateKey := "broker_user"
-		handleUserDetails(templateKey, approvalDetail.BrokerUser.UserDetails)
+	if approvalDetail.AddressOwner != nil {
+		templateKey := "address_owner"
+		handleUserDetails(templateKey, approvalDetail.AddressOwner.UserDetails)
 	}
 
 	if approvalDetail.Spender != nil {
@@ -145,7 +153,7 @@ func (w *Waas2) getTemplateByApprovalDetail(ctx context.Context, approvalDetail 
 				return nil, fmt.Errorf("tx %s template business key or template version is nil", *approvalDetail.TransactionId)
 			}
 			templateName := TemplateName{
-				TemplateKey:     *template.BusinessKey,
+				TemplateKey:     businessKeyToTemplateKey(*template.BusinessKey),
 				TemplateVersion: *template.TemplateVersion,
 			}
 			w.templateMapCache[getTemplateKey(templateName)] = template
@@ -153,7 +161,11 @@ func (w *Waas2) getTemplateByApprovalDetail(ctx context.Context, approvalDetail 
 	}
 
 	for _, templateName := range needAllTemplateNameMap {
-		needAllTemplateList = append(needAllTemplateList, w.templateMapCache[getTemplateKey(templateName)])
+		template, exists := w.templateMapCache[getTemplateKey(templateName)]
+		if !exists {
+			return nil, fmt.Errorf("tx %s template %s not found in cache", *approvalDetail.TransactionId, getTemplateKey(templateName))
+		}
+		needAllTemplateList = append(needAllTemplateList, template)
 	}
 
 	return needAllTemplateList, nil

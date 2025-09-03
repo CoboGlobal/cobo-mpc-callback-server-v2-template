@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/validator"
-	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-api/waas2"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
 type TxApprovalDetail struct {
@@ -75,42 +75,46 @@ func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) 
 
 	transactionType := strings.ToLower(string(*transaction.Type))
 
-	handleUserDetails := func(templateKey string, userDetails []coboWaas2.ApprovalUserDetail) error {
-		approveCount, err := t.verifyUserDetails(templateKey, userDetails)
+	handleUserDetails := func(templateKey string, roleDetail *coboWaas2.RoleDetail) error {
+		if len(roleDetail.UserDetails) == 0 {
+			return fmt.Errorf("role detail user details is empty")
+		}
+
+		approveCount, err := t.verifyUserDetails(templateKey, roleDetail.UserDetails)
 		if err != nil {
-			return fmt.Errorf("txApprovalDetail failed to verify user details: %w", err)
+			return fmt.Errorf("user details failed to verify: %w", err)
 		}
 
-		if approvalDetail.BrokerUser.Threshold == nil {
-			return fmt.Errorf("txApprovalDetail broker user threshold is nil")
+		if roleDetail.Threshold == nil {
+			return fmt.Errorf("role detail threshold is nil")
 		}
 
-		if approveCount < int(*approvalDetail.BrokerUser.Threshold) {
-			return fmt.Errorf("txApprovalDetail approve count %d is less than threshold %d", approveCount, *approvalDetail.BrokerUser.Threshold)
+		if approveCount < int(*roleDetail.Threshold) {
+			return fmt.Errorf("user detail approve count %d is less than threshold %d", approveCount, *roleDetail.Threshold)
 		}
 
-		if approvalDetail.BrokerUser.Result == nil {
-			return fmt.Errorf("txApprovalDetail broker user result is nil")
+		if roleDetail.Result == nil {
+			return fmt.Errorf("role detail result is nil")
 		}
 
-		if *approvalDetail.BrokerUser.Result != coboWaas2.APPROVALTRANSACTIONRESULT_APPROVED {
-			return fmt.Errorf("txApprovalDetail broker user result is not approved")
+		if *roleDetail.Result != coboWaas2.APPROVALTRANSACTIONRESULT_APPROVED {
+			return fmt.Errorf("role detail result is not approved")
 		}
 
 		return nil
 	}
 
-	if approvalDetail.BrokerUser != nil {
-		templateKey := "broker_user"
-		if err := handleUserDetails(templateKey, approvalDetail.BrokerUser.UserDetails); err != nil {
-			return fmt.Errorf("txApprovalDetail failed to verify broker user details: %w", err)
+	if approvalDetail.AddressOwner != nil {
+		templateKey := "address_owner"
+		if err := handleUserDetails(templateKey, approvalDetail.AddressOwner); err != nil {
+			return fmt.Errorf("txApprovalDetail failed to verify address owner details: %w", err)
 		}
-		fmt.Println("broker user details verified and approved")
+		fmt.Println("address owner details verified and approved")
 	}
 
 	if approvalDetail.Spender != nil {
 		templateKey := transactionType
-		if err := handleUserDetails(templateKey, approvalDetail.Spender.UserDetails); err != nil {
+		if err := handleUserDetails(templateKey, approvalDetail.Spender); err != nil {
 			return fmt.Errorf("txApprovalDetail failed to verify spender user details: %w", err)
 		}
 		fmt.Println("spender user details verified and approved")
@@ -118,7 +122,7 @@ func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) 
 
 	if approvalDetail.Approver != nil {
 		templateKey := transactionType
-		if err := handleUserDetails(templateKey, approvalDetail.Approver.UserDetails); err != nil {
+		if err := handleUserDetails(templateKey, approvalDetail.Approver); err != nil {
 			return fmt.Errorf("txApprovalDetail failed to verify approver user details: %w", err)
 		}
 		fmt.Println("approver user details verified and approved")
@@ -168,7 +172,7 @@ func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDet
 			continue
 		}
 
-		if *template.TemplateVersion == *userDetail.TemplateVersion && *template.BusinessKey == templateKey {
+		if *template.TemplateVersion == *userDetail.TemplateVersion && businessKeyToTemplateKey(*template.BusinessKey) == templateKey {
 			found = true
 			authTemplate = *template.TemplateText
 			break
@@ -199,8 +203,8 @@ func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDet
 	// get signature
 	signature := *userDetail.Signature
 
-	// get message
-	message := ""
+	// // get message // api not get message
+	// message := ""
 
 	authData := &validator.AuthData{
 		Template:  authTemplate,
@@ -208,7 +212,7 @@ func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDet
 		Result:    authResult,
 		Pubkey:    pubkey,
 		Signature: signature,
-		Message:   message,
+		// Message:   message,
 	}
 	authValidator := validator.NewAuthValidator(authData)
 	err = authValidator.VerifyAuthData()
