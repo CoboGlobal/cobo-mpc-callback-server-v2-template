@@ -1,57 +1,49 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"slices"
 
-	"github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/validator"
-	// "github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/waas2"
+	"github.com/CoboGlobal/cobo-mpc-callback-server-v2-template/cobo-mpc-auth-data-verify/waas2"
+	coboWaas2 "github.com/CoboGlobal/cobo-waas2-go-sdk/cobo_waas2"
 )
 
-var pubkeyWhitelist = []string{
-	"",
-}
+var (
+	pubkeyWhitelist = []string{
+		"",
+	}
+
+	apiSecret = ""
+	env       = coboWaas2.DevEnv
+)
 
 func main() {
-	transactionID := "mock_transaction_id"
+	// init waas2 client
+	transactionIds := []string{"mock_transaction_id"}
 
-	// step 1: get auth data for transaction
-	authData, err := getAuthData(transactionID)
+	client := waas2.NewClient(apiSecret, env)
+
+	waas2Client := waas2.NewWaas2(client)
+
+	// build transaction and approval details
+	txApprovalDetails, err := waas2Client.Build(context.Background(), transactionIds)
 	if err != nil {
-		log.Printf("error getting auth data: %v\n", err)
-		return
+		panic(fmt.Errorf("failed to build transaction approval details: %w", err))
 	}
 
-	// step 2: ensure pubkey is in whitelist
-	if !slices.Contains(pubkeyWhitelist, authData.Pubkey) {
-		log.Printf("pubkey is not in whitelist: %s\n", authData.Pubkey)
-		return
+	config := waas2.Config{
+		PubkeyWhitelist: pubkeyWhitelist,
 	}
 
-	// step 3: verify auth data
-	err = verifyAuthData(authData)
-	if err != nil {
-		log.Printf("error verifying auth data: %v\n", err)
-		return
+	for _, txApprovalDetail := range txApprovalDetails {
+		// verify transaction approval detail
+		validator := waas2.NewTxApprovalDetailValidator(txApprovalDetail, &config)
+		err = validator.Verify(context.Background())
+		if err != nil {
+			panic(fmt.Errorf("failed to verify transaction approval detail: %w", err))
+		}
+
+		// verify txApprovalDetail (transaction and approval detail)
+		// txApprovalDetail and tss callback data are matched
 	}
-
-	// step 4: verify biz data is valid:
-	// 1. biz data and tss callback data are matched
-	// 2. biz data and transaction detail from waas2 are matched
-
-}
-
-// getAuthData get auth data from waas2
-func getAuthData(transactionID string) (*validator.AuthData, error) {
-	// waas2Client := waas2.NewClient(apiSecret)
-	// txDetail, err := waas2Client.GetTransactionApprovalDetail(context.Background(), transactionId)
-	// if err != nil {
-	// 	return fmt.Errorf("failed to get transaction approval detail: %w", err)
-	// }
-	return nil, fmt.Errorf("not implemented")
-}
-
-func verifyAuthData(authData *validator.AuthData) error {
-	return validator.NewAuthValidator(authData).Verify()
 }

@@ -189,7 +189,15 @@ func (s *StatementBuilder) Build(bizData string) (string, error) {
 		return "", fmt.Errorf("error rendering template: %w", err)
 	}
 
-	return message, nil
+	// Convert JSON to compact string without formatting while preserving key order
+	// First validate that it's valid JSON
+	var buf bytes.Buffer
+	err = json.Compact(&buf, []byte(message))
+	if err != nil {
+		return "", fmt.Errorf("compact rendered template failed: %v", err)
+	}
+
+	return string(buf.Bytes()), nil
 }
 
 func getGonjaTemplate(source string) (*exec.Template, error) {
