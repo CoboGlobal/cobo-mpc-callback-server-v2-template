@@ -57,6 +57,7 @@ func (c *Client) ListTransactions(ctx context.Context, transactionIds []string) 
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 		return nil, err
 	}
+	// todo: handle pagination
 
 	return resp.Data, nil
 }
