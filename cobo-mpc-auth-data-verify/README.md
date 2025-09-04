@@ -191,10 +191,6 @@ go test ./...
 - Verify transaction data consistency with TSS callbacks
 - Monitor for signature verification failures
 
-## License
-
-This project is part of the Cobo MPC Callback Server template system.
-
 ## Support
 
 For technical support and questions, please refer to the Cobo documentation or contact the development team.
