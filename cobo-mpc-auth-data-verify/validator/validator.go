@@ -13,9 +13,9 @@ type AuthData struct {
 	Result    int    `json:"result"`
 	Pubkey    string `json:"pubkey"`
 	Signature string `json:"signature"`
-	Message   string `json:"message"`
-	Template  string `json:"template"`
-	BizData   string `json:"biz_data"`
+	// Message   string `json:"message"`
+	Template string `json:"template"`
+	BizData  string `json:"biz_data"`
 }
 
 type AuthValidator struct {
@@ -55,19 +55,19 @@ func (v *AuthValidator) VerifyAuthData() error {
 		return fmt.Errorf("error building statement: %w", err)
 	}
 
-	originalMsg := v.authData.Message
-	if originalMsg == "" {
-		originalMsg = buildMsg
-	} else {
-		// step 2: verify statement message and build message are equal
-		equal, diff := CompareStatementMessage(buildMsg, originalMsg)
-		if !equal {
-			return fmt.Errorf("source message and build message are not equal: %s", diff)
-		}
-	}
+	// originalMsg := v.authData.Message
+	// if originalMsg == "" {
+	// 	originalMsg = buildMsg
+	// } else {
+	// 	// step 2: verify statement message and build message are equal
+	// 	equal, diff := CompareStatementMessage(buildMsg, originalMsg)
+	// 	if !equal {
+	// 		return fmt.Errorf("source message and build message are not equal: %s", diff)
+	// 	}
+	// }
 
 	// step 3: verify signature of message and result
-	sv := NewSignatureValidator(originalMsg, v.authData.Pubkey, v.authData.Signature, v.authData.Result)
+	sv := NewSignatureValidator(buildMsg, v.authData.Pubkey, v.authData.Signature, v.authData.Result)
 	err = sv.Verify()
 	if err != nil {
 		return fmt.Errorf("error verifying message: %w", err)
