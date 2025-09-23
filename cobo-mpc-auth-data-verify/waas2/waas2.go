@@ -125,16 +125,26 @@ func (w *Waas2) getTemplatesByApprovalDetail(ctx context.Context, approvalDetail
 	}
 
 	if approvalDetail.AddressOwner != nil {
+		if approvalDetail.AddressOwner.IsUpgraded == nil || !*approvalDetail.AddressOwner.IsUpgraded {
+			return nil, fmt.Errorf("tx %s address owner is not upgraded", *approvalDetail.TransactionId)
+		}
 		templateKey := "address_owner"
 		handleUserDetails(templateKey, approvalDetail.AddressOwner.UserDetails)
 	}
 
 	if approvalDetail.Spender != nil {
+		if approvalDetail.Spender.IsUpgraded == nil || !*approvalDetail.Spender.IsUpgraded {
+			return nil, fmt.Errorf("tx %s spender is not upgraded", *approvalDetail.TransactionId)
+
+		}
 		templateKey := transactionType
 		handleUserDetails(templateKey, approvalDetail.Spender.UserDetails)
 	}
 
 	if approvalDetail.Approver != nil {
+		if approvalDetail.Approver.IsUpgraded == nil || !*approvalDetail.Approver.IsUpgraded {
+			return nil, fmt.Errorf("tx %s approver is not upgraded", *approvalDetail.TransactionId)
+		}
 		templateKey := transactionType
 		handleUserDetails(templateKey, approvalDetail.Approver.UserDetails)
 	}

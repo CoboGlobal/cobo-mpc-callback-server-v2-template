@@ -5,7 +5,7 @@ go 1.24.4
 toolchain go1.24.6
 
 require (
-	github.com/CoboGlobal/cobo-waas2-go-sdk v1.22.0
+	github.com/CoboGlobal/cobo-waas2-go-sdk v1.23.0
 	github.com/google/go-cmp v0.7.0
 	github.com/nikolalohinski/gonja/v2 v2.3.5
 	github.com/stretchr/testify v1.10.0
