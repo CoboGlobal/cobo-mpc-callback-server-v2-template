@@ -85,12 +85,12 @@ func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) 
 			return fmt.Errorf("user details failed to verify: %w", err)
 		}
 
-		if roleDetail.Threshold == nil {
+		if roleDetail.ReviewThreshold == nil {
 			return fmt.Errorf("role detail threshold is nil")
 		}
 
-		if approveCount < int(*roleDetail.Threshold) {
-			return fmt.Errorf("user detail approve count %d is less than threshold %d", approveCount, *roleDetail.Threshold)
+		if approveCount < int(*roleDetail.ReviewThreshold) {
+			return fmt.Errorf("user detail approve count %d is less than threshold %d", approveCount, *roleDetail.ReviewThreshold)
 		}
 
 		if roleDetail.Result == nil {
@@ -105,6 +105,9 @@ func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) 
 	}
 
 	if approvalDetail.AddressOwner != nil {
+		if approvalDetail.AddressOwner.IsUpgraded == nil || !*approvalDetail.AddressOwner.IsUpgraded {
+			return fmt.Errorf("tx %s address owner is not upgraded", t.tad.TransactionId)
+		}
 		templateKey := "address_owner"
 		if err := handleUserDetails(templateKey, approvalDetail.AddressOwner); err != nil {
 			return fmt.Errorf("txApprovalDetail failed to verify address owner details: %w", err)
@@ -113,6 +116,9 @@ func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) 
 	}
 
 	if approvalDetail.Spender != nil {
+		if approvalDetail.Spender.IsUpgraded == nil || !*approvalDetail.Spender.IsUpgraded {
+			return fmt.Errorf("tx %s spender is not upgraded", t.tad.TransactionId)
+		}
 		templateKey := transactionType
 		if err := handleUserDetails(templateKey, approvalDetail.Spender); err != nil {
 			return fmt.Errorf("txApprovalDetail failed to verify spender user details: %w", err)
@@ -121,6 +127,9 @@ func (t *TxApprovalDetailValidator) verifyTxApprovalDetail(ctx context.Context) 
 	}
 
 	if approvalDetail.Approver != nil {
+		if approvalDetail.Approver.IsUpgraded == nil || !*approvalDetail.Approver.IsUpgraded {
+			return fmt.Errorf("tx %s approver is not upgraded", t.tad.TransactionId)
+		}
 		templateKey := transactionType
 		if err := handleUserDetails(templateKey, approvalDetail.Approver); err != nil {
 			return fmt.Errorf("txApprovalDetail failed to verify approver user details: %w", err)
@@ -190,7 +199,7 @@ func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDet
 	}
 
 	// get auth result
-	authResult := int(*userDetail.Result)
+	authResult := *userDetail.Result
 
 	// get pubkey
 	pubkey := *userDetail.Pubkey
@@ -209,7 +218,7 @@ func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDet
 	authData := &validator.AuthData{
 		Template:  authTemplate,
 		BizData:   bizData,
-		Result:    authResult,
+		Result:    int(*userDetail.ApprovalResultCode),
 		Pubkey:    pubkey,
 		Signature: signature,
 		// Message:   message,
@@ -220,7 +229,7 @@ func (t *TxApprovalDetailValidator) verifyUserDetail(templateKey string, userDet
 		return false, fmt.Errorf("failed to verify user detail: %w", err)
 	}
 
-	return authResult == int(coboWaas2.APPROVALRESULT_APPROVED), nil
+	return authResult == coboWaas2.APPROVALRESULT_APPROVED, nil
 }
 
 // buildBizData merges the properties of Transaction and ApprovalUserDetail into a single JSON string
@@ -247,6 +256,13 @@ func buildBizData(transaction *coboWaas2.Transaction, userDetail coboWaas2.Appro
 	}
 	for key, value := range userDetailMap {
 		mergedData[key] = value
+	}
+
+	//handle user detail show_info
+	if userDetail.ShowInfo != nil {
+		showInfoMap := make(map[string]interface{})
+		json.Unmarshal([]byte(*userDetail.ShowInfo), &showInfoMap)
+		mergedData["show_info"] = showInfoMap
 	}
 
 	// Convert merged data to JSON string
