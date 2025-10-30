@@ -68,12 +68,24 @@
       },
       {
         "_component_type": "text_with_popup",
-        "key": "New Main Group",
+        "key": "New Key",
         "data": {
           "value": "More Details",
           "popup": {
-            "title": "New Main Group",
+            "title": "New Key",
             "components": [
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "Threshold",
+                    "data": [{{ value_new_key_threshold | toString }}]
+                  },
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "Key Purpose",
+                    "data": [{{ value_new_key_purpose | toString }}]
+                  },
                   {
                     "_component_type": "paragraph",
                     "_style": {},
@@ -85,6 +97,7 @@
                     "_style": {},
                     "data": {
                       "title": {{ holder['holder'] | toString }},
+                      "description": {{ holder['role'] | toString }},
                       "icon": "",
                       "contents": [
                         {
@@ -101,17 +114,29 @@
       },
       {
         "_component_type": "text_with_popup",
-        "key": "Reshare From Group",
+        "key": "Source Key",
         "data": {
           "value": "More Details",
           "popup": {
-            "title": "Reshare From Group",
+            "title": "Source Key",
             "components": [
                   {
                     "_component_type": "paragraph",
                     "_style": {},
                     "key": "Group ID",
                     "data": [{{ value_from_group_id | toString }}]
+                  },
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "Threshold",
+                    "data": [{{ value_from_key_threshold | toString }}]
+                  },
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "Key Purpose",
+                    "data": [{{ value_from_key_purpose | toString }}]
                   },
                   {
                     "_component_type": "paragraph",
@@ -124,6 +149,7 @@
                     "_style": {},
                     "data": {
                       "title": {{ holder['holder'] | toString }},
+                      "description": {{ holder['role'] | toString }},
                       "icon": "",
                       "contents": [
                         {

@@ -61,30 +61,53 @@
       },
       {
         "_component_type": "text",
-        "key": "App Name",
+        "key": "Vault Name",
         "data": {
-          "value": {{ value_app_name | toString }}
-        }
-      },
-      {
-        "_component_type": "text",
-        "key": "Operation",
-        "data": {
-          "value": {{ operation_name | toString }}
+          "value": {{ vault_name | toString }}
         }
       },
       {
         "_component_type": "text_with_popup",
-        "key": "Approval Rules",
+        "key": "Holder Group",
         "data": {
           "value": "More Details",
           "popup": {
-            "title": "Approval Rules",
+            "title": "Holder Group",
             "components": [
-              {
-                "_component_type": "rules",
-                "data": {{ approval_rules | toRules }}
-              }
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "Threshold",
+                    "data": [{{ value_key_threshold | toString }}]
+                  },
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "Key Purpose",
+                    "data": [{{ value_key_purpose | toString }}]
+                  },
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "{{ key_share_holders | len }} Key Share Holders"
+                  },
+                  {% for holder in key_share_holders %}
+                  {
+                    "_component_type": "card",
+                    "_style": {},
+                    "data": {
+                      "title": {{ holder['holder'] | toString }},
+                      "description": {{ holder['role'] | toString }},
+                      "icon": "",
+                      "contents": [
+                        {
+                          "content_key": "TSS Node ID",
+                          "content_value": {{ holder['tss_node_id'] | toString }}
+                        }
+                      ]
+                    }
+                  }{% if not loop.last %},{% endif %}
+                  {% endfor %}
             ]
           }
         }

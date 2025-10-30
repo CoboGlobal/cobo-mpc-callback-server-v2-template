@@ -74,20 +74,30 @@
               "is_large_size": false,
               "is_bold": false
             },
-            "key": "Operation",
+            "key": "Developer",
             "data": {
-              "value": {{ operation_name | toString }}
+              "value": {{ developer | toString }}
             }
           },
           {
-            "_component_type": "rules",
+            "_component_type": "paragraph",
             "_style": {
               "is_highlighted": false,
               "is_large_size": false,
               "is_bold": false
             },
-            "key": "Approval Rules",
-            "data": {{ approval_rules | toRules }}
+            "key": "Wallets",
+            "data": {{ wallets | toList1 }}
+          },
+          {
+            "_component_type": "paragraph",
+            "_style": {
+              "is_highlighted": false,
+              "is_large_size": false,
+              "is_bold": false
+            },
+            "key": "Permissions",
+            "data": {{ permissions | toList1 }}
           }
         ]
       }

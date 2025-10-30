@@ -475,3 +475,19 @@ func TestCompareStatementMessage(t *testing.T) {
 		})
 	}
 }
+
+func TestBuildSimpleStatementV2(t *testing.T) {
+	templateContent := `
+  {
+    {% set contract_name = destination.safe_tx_extra_data.to_contract_name %}     
+    {% set action_method="abc" %}
+    {% set panel_title = contract_name ~ "." ~ action_method if contract_name | len > 0 else action_method %}
+    "title": {{ panel_title | toString }}
+  }       
+  `
+	data := `{"destination": {"safe_tx_extra_data": {"to_contract_name": "d"}}}`
+	s := NewStatementBuilder(templateContent)
+	message, err := s.Build(data)
+	assert.NoError(t, err)
+	fmt.Printf("Message:\n %s\n", message)
+}

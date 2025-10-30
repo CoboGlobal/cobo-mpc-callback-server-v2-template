@@ -61,18 +61,53 @@
       },
       {
         "_component_type": "text",
-        "key": "Operation",
+        "key": "Wallets",
         "data": {
-          "value": {{ operation_name | toString }}
-        }
-      },
-      {
-        "_component_type": "text",
-        "key": "App Name",
-        "data": {
-          "value": {{ value_app_name | toString }}
+          "value": {{ wallet | toString }}
         }
       }
+      {% if value_chains_to_add %},
+      {
+        "_component_type": "text_with_popup",
+        "key": "Chains to be Added",
+        "data": {
+          "value": "{{ value_chains_to_add | len }} Chains",
+          "popup": {
+            "title": "Chains to be Added",
+            "sub_title": "{{ value_chains_to_add | len }} Chains",
+            "components": [
+                  {% for chain in value_chains_to_add %}
+                  {
+                    "_component_type": "paragraph",
+                    "data":[{{ chain | toString }}]
+                  }{% if not loop.last %},{% endif %}
+                  {% endfor %}
+                ]
+          }
+        }
+      }
+      {% endif %}
+      {% if value_chains_to_delete %},
+      {
+        "_component_type": "text_with_popup",
+        "key": "Chains to be Deleted",
+        "data": {
+          "value": "{{ value_chains_to_delete | len }} Chains",
+          "popup": {
+            "title": "Chains to be Deleted",
+            "sub_title": "{{ value_chains_to_delete | len }} Chains",
+            "components": [
+                  {% for chain in value_chains_to_delete %}
+                  {
+                    "_component_type": "paragraph",
+                    "data":[{{ chain | toString }}]
+                  }{% if not loop.last %},{% endif %}
+                  {% endfor %}
+                ]
+          }
+        }
+      }
+      {% endif %}
     ]
   }
 }

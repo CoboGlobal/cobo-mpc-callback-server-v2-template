@@ -61,16 +61,55 @@
       },
       {
         "_component_type": "text",
-        "key": "Operation",
+        "key": "Vault Name",
         "data": {
-          "value": {{ operation_name | toString }}
+          "value": {{ vault_name | toString }}
         }
       },
       {
-        "_component_type": "text",
-        "key": "App Name",
+        "_component_type": "text_with_popup",
+        "key": "Key Share Holder",
         "data": {
-          "value": {{ value_app_name | toString }}
+          "value": "{{ key_share_holders | len }} Key Share Holders",
+          "popup": {
+            "title": "Key Share Holder",
+            "sub_title": "{{ key_share_holders | len }} Key Share Holders",
+            "components": [
+                {% for holder in key_share_holders %}
+                {
+                  "_component_type": "card",
+                  "_style": {},
+                  "data": {
+                    "title": {{ holder['holder'] | toString }},
+                    "icon": "",
+                    "contents": [
+                      {
+                        "content_key": "TSS Node ID",
+                        "content_value": {{ holder['tss_node_id'] | toString }}
+                      }
+                    ]
+                  }
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+          }
+        }
+      },
+      {
+        "_component_type": "text_with_popup",
+        "key": "Recurring Time",
+        "data": {
+          "value": {{ value_recurring_time | toString }},
+          "popup": {
+            "title": "Recurring Time",
+            "components": [
+              {
+                "_component_type": "paragraph",
+                "_style": {},
+                "data": [{{ value_recurring_time | toString }}]
+              }
+            ]
+          }
         }
       }
     ]

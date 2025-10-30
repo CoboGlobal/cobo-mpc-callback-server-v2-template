@@ -27,8 +27,28 @@ func NewStatementBuilder(template string) *StatementBuilder {
 func getGonjaFilters() map[string]exec.FilterFunction {
 	return map[string]exec.FilterFunction{
 		"toString": func(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
-			bytes, _ := json.Marshal(in.Interface())
-			return exec.AsValue(string(bytes))
+			val := in.Interface()
+
+			// Match Python logic:
+			// - If it's an int or float, convert to string first, then JSON marshal
+			// - Otherwise, directly marshal the value
+			switch v := val.(type) {
+			case int:
+				// For integers, convert to string representation, then JSON marshal
+				str := fmt.Sprintf("%v", v)
+				bytes, _ := json.Marshal(str)
+				return exec.AsValue(string(bytes))
+			case float64:
+				// For floats, convert to string representation, then JSON marshal
+				str := fmt.Sprintf("%v", v)
+				bytes, _ := json.Marshal(str)
+				return exec.AsValue(string(bytes))
+			
+			default:
+				// For all other types (string, bool, nil, arrays), directly marshal to JSON
+				bytes, _ := json.Marshal(val)
+				return exec.AsValue(string(bytes))
+			}
 		},
 		"toInt": func(e *exec.Evaluator, in *exec.Value, params *exec.VarArgs) *exec.Value {
 			switch val := in.Interface().(type) {
@@ -197,7 +217,7 @@ func (s *StatementBuilder) Build(bizData string) (string, error) {
 		return "", fmt.Errorf("compact rendered template failed: %v", err)
 	}
 
-	return string(buf.Bytes()), nil
+	return buf.String(), nil
 }
 
 func getGonjaTemplate(source string) (*exec.Template, error) {

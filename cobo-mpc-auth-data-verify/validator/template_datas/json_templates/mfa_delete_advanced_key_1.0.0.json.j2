@@ -68,62 +68,53 @@
       },
       {
         "_component_type": "text_with_popup",
-        "key": "New Main Group",
+        "key": "Group ID",
         "data": {
-          "value": "More Details",
+          "value": {{ value_group_id | toString }},
           "popup": {
-            "title": "New Main Group",
+            "title": "Group ID",
             "components": [
-                  {
-                    "_component_type": "paragraph",
-                    "_style": {},
-                    "key": "{{ new_key_share_holders | len }} Key Share Holders"
-                  },
-                  {% for holder in new_key_share_holders %}
-                  {
-                    "_component_type": "card",
-                    "_style": {},
-                    "data": {
-                      "title": {{ holder['holder'] | toString }},
-                      "icon": "",
-                      "contents": [
-                        {
-                          "content_key": "TSS Node ID",
-                          "content_value": {{ holder['tss_node_id'] | toString }}
-                        }
-                      ]
-                    }
-                  }{% if not loop.last %},{% endif %}
-                  {% endfor %}
+              {
+                "_component_type": "paragraph",
+                "_style": {},
+                "data": [{{ value_group_id | toString }}]
+              }
             ]
           }
         }
       },
       {
         "_component_type": "text_with_popup",
-        "key": "Reshare From Group",
+        "key": "Holder Group",
         "data": {
           "value": "More Details",
           "popup": {
-            "title": "Reshare From Group",
+            "title": "Holder Group",
             "components": [
                   {
                     "_component_type": "paragraph",
                     "_style": {},
-                    "key": "Group ID",
-                    "data": [{{ value_from_group_id | toString }}]
+                    "key": "Threshold",
+                    "data": [{{ value_key_threshold | toString }}]
                   },
                   {
                     "_component_type": "paragraph",
                     "_style": {},
-                    "key": "{{ from_key_share_holders | len }} Key Share Holders"
+                    "key": "Key Purpose",
+                    "data": [{{ value_key_purpose | toString }}]
                   },
-                  {% for holder in from_key_share_holders %}
+                  {
+                    "_component_type": "paragraph",
+                    "_style": {},
+                    "key": "{{ key_share_holders | len }} Key Share Holders"
+                  },
+                  {% for holder in key_share_holders %}
                   {
                     "_component_type": "card",
                     "_style": {},
                     "data": {
                       "title": {{ holder['holder'] | toString }},
+                      "description": {{ holder['role'] | toString }},
                       "icon": "",
                       "contents": [
                         {

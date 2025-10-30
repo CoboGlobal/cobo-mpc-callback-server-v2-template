@@ -2,8 +2,8 @@
   "_theme": "structured",
   "_biz_version": {{ template_version | toString }},
   "header": {
-    "title": {{header_title | toString }},
-    "title_icon": "https://d.cobo.com/public/documents/statement_mfa.png"
+    "title": {{ header_title | toString }},
+    "title_icon": "https://d.cobo.com/public/logos/business_guard_icon.png"
   },
   "body": {
     "components": [
@@ -52,9 +52,9 @@
           }
         ]
       },
-        {
-          "_component_type": "section",
-          "components": [
+      {
+        "_component_type": "section",
+        "components": [
           {
             "_component_type": "text",
             "_style": {
@@ -62,33 +62,42 @@
               "is_large_size": false,
               "is_bold": false
             },
-            "key": "App Name",
+            "key": "Vault Name",
             "data": {
-              "value": {{ app_name | toString }}
+              "value": {{ vault_name | toString }}
             }
-          },
-          {
-            "_component_type": "text",
-            "_style": {
-              "is_highlighted": false,
-              "is_large_size": false,
-              "is_bold": false
-            },
-            "key": "Operation",
-            "data": {
-              "value": {{ operation_name | toString }}
-            }
-          },
-          {
-            "_component_type": "rules",
-            "_style": {
-              "is_highlighted": false,
-              "is_large_size": false,
-              "is_bold": false
-            },
-            "key": "Approval Rules",
-            "data": {{ approval_rules | toRules }}
           }
+        ]
+      },
+      {
+        "_component_type": "section",
+        "components": [
+          {% for holder in key_share_holder %}
+          {
+            "_component_type": "text",
+            "_style": {
+              "is_highlighted": false,
+              "is_large_size": false,
+              "is_bold": false
+            },
+            "key": "Key Share Holder",
+            "data": {
+              "value": {{ holder['holder'] | toString }}
+            }
+          },
+          {
+            "_component_type": "text",
+            "_style": {
+              "is_highlighted": false,
+              "is_large_size": false,
+              "is_bold": false
+            },
+            "key": "TSS Node ID",
+            "data": {
+              "value": {{ holder['tss_node_id'] | toString }}
+            }
+          }{% if not loop.last %},{% endif %}
+          {% endfor %}            
         ]
       }
     ]

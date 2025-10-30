@@ -138,11 +138,7 @@
             "data": {
               {% if source.source_type in ["Org-Controlled","User-Controlled","Web3","Safe{Wallet}"] %}
               "label": {{ show_info.from_address_label | toString }},
-              {% if source.address %}
               "value": {{ source.address | toString }}
-              {% else %}
-              "value": "Multiple addresses"
-              {% endif %}
               {% elif source.source_type in ["Asset","Main","Sub"] %}
               "value": {{ show_info.wallet_name | toString }}
               {% endif %}
