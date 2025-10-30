@@ -94,6 +94,7 @@
         "wallet_name": "Default wallet 08996",
         "environment": "Prod",
         "from_address_label": "0xAe17bB62a5dfF598ceD2671BA6E7E320ec9e460A",
-        "to_address_label": ""
+        "to_address_label": "",
+        "decoded_message": "Example `personal_sign` message"
     }
 }

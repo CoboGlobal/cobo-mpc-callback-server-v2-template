@@ -1,0 +1,57 @@
+{
+    "template_version": "0.0.1",
+    "initiator": "lzhang@cobo.com",
+    "header_title": "Create New MPC Key",
+    "org_name": "org4006",
+    "environment": "Prod",
+    "created_time": "2025-05-14 11:22:12",
+    "expired_time": "2025-05-15 11:22:12",
+    "statement_uuid": "uuid-abc-123",
+    "vault_name": "Cobo Demo Vault",
+    "section1_title": "New Key",
+    "new_key_threshold": "2/3",
+    "new_key_purpose": "Signing Key",
+    "new_key_share_holder": [
+        {
+            "holder": "cobo",
+            "role": "Fixed Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        },
+        {
+            "holder": "shihan.yue@cobo.com",
+            "role": "Regular Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        },
+        {
+            "holder": "yichun.wang@cobo.com",
+            "role": "Standby Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        }
+    ],
+    "section2_title": "Source Key",
+    "from_group_id": "d8bab73f-5721-4924-a0ff-167e33bbe740",
+    "from_key_threshold": "2/3",
+    "from_key_purpose": "Signing Key",
+    "from_key_share_holder": [
+        {
+            "holder": "cobo",
+            "role": "Fixed Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        },
+        {
+            "holder": "shihan.yue@cobo.com",
+            "role": "Regular Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        },
+        {
+            "holder": "yichun.wang@cobo.com",
+            "role": "Regular Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        },
+        {
+            "holder": "linjie.wang@cobo.com",
+            "role": "Standby Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        }
+    ]
+}

@@ -1,31 +1,30 @@
 {
     "template_version": "0.0.1",
     "initiator": "lzhang@cobo.com",
-    "action": "Recover New Main Group",
+    "action": "Edit Signer Roles & Key Purpose",
     "org_name": "org4006",
     "environment": "Prod",
     "created_time": "2025-05-14 11:22:12",
     "expired_time": "2025-05-15 11:22:12",
     "statement_uuid": "uuid-abc-123",
     "vault_name": "Vault-001",
-    "new_key_share_holders": [
+    "value_group_id": "012af302-3cfb-4891-a50b-93b044d610fd",
+    "value_key_threshold": "2/3",
+    "value_key_purpose": "Signing Key",
+    "key_share_holders": [
+        {
+            "holder": "cobo",
+            "role": "Fixed Signer",
+            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
+        },
         {
             "holder": "yin.wang@cobo.com",
+            "role": "Regular Signer",
             "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
         },
         {
             "holder": "lzhang@cobo.com",
-            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
-        }
-    ],
-    "value_from_group_id": "012af302-3cfb-4891-a50b-93b044d610zf",
-    "from_key_share_holders": [
-        {
-            "holder": "yin.wang@cobo.com",
-            "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
-        },
-        {
-            "holder": "lzhang@cobo.com",
+            "role": "Standby Signer",
             "tss_node_id": "coboMbU7KeJdhakshgkahdsghaldshglasdh"
         }
     ]

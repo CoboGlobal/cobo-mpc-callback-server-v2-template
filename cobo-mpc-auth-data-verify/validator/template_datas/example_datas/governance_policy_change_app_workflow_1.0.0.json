@@ -8,6 +8,7 @@
     "expired_time": "2025-05-15 11:22:12",
     "statement_uuid": "uuid-abc-123",
     "app_name": "Batch Payouts",
+    "operation_name": "test",
     "approval_rules": [
               {
                 "condition": "Total amount (USD) > 1000 ",
