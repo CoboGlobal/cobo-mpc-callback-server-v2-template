@@ -75,3 +75,18 @@ func (v *AuthValidator) VerifyAuthData() error {
 
 	return nil
 }
+
+func (v *AuthValidator) BuildStatementMessage() (string, error) {
+	if v.authData == nil {
+		return "", fmt.Errorf("auth data is nil")
+	}
+
+	statement := NewStatementBuilder(v.authData.Template)
+	
+	// step 1: build statement message from biz data and template
+	buildMsg, err := statement.Build(v.authData.BizData)
+	if err != nil {
+		return "", fmt.Errorf("error building statement: %w", err)
+	}
+	return buildMsg, nil
+}
