@@ -40,7 +40,7 @@ func TestBuildStatementV2(t *testing.T) {
 		"sign_message_approver_approval",
 		"sign_message_spender_check",
 		"transaction_contractcall",
-		//"transaction",
+		"transaction_messagesign",
 	}
 	for _, bizKey := range bizKeys {
 		data, err := getBizData(bizKey)
@@ -55,18 +55,23 @@ func TestBuildStatementV2(t *testing.T) {
 		assert.NoError(t, err)
 		//fmt.Printf("bizKey:\n %s\n", bizKey)
 		//fmt.Printf("Data:\n %s\n", data)
-		//fmt.Printf("Message:\n %s\n", message)
+		//fmt.Printf("build message:\n %s\n", message)
 
 		message2, err := getMessage(bizKey)
 		assert.NoError(t, err)
 
-		got, gotDiff := CompareStatementMessage(message, message2)
-		if got != true {
-			t.Errorf("key: %s, CompareStatementMessage() got = %v, want %v", bizKey, got, true)
+		if message != message2 {
+			t.Errorf("key: %s, message != message2", bizKey)
+			t.Logf("message:  \n %s", message)
+			t.Logf("message2: \n %s", message2)
 		}
-		if gotDiff != "" {
-			t.Logf("gotDiff: %s", gotDiff)
-		}
+		// got, gotDiff := CompareStatementMessage(message, message2)
+		// if got != true {
+		// 	t.Errorf("key: %s, CompareStatementMessage() got = %v, want %v", bizKey, got, true)
+		// }
+		// if gotDiff != "" {
+		// 	t.Logf("gotDiff: %s", gotDiff)
+		// }
 	}
 }
 

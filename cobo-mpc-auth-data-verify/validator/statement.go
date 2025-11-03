@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/nikolalohinski/gonja/v2"
@@ -210,14 +211,21 @@ func (s *StatementBuilder) Build(bizData string) (string, error) {
 	}
 
 	// Convert JSON to compact string without formatting while preserving key order
-	// First validate that it's valid JSON
+	// First validate that it's valid JSON and compact it
 	var buf bytes.Buffer
 	err = json.Compact(&buf, []byte(message))
 	if err != nil {
 		return "", fmt.Errorf("compact rendered template failed: %v", err)
 	}
 
-	return buf.String(), nil
+	// json.Compact escapes HTML characters like <, >, &
+	// We need to unescape them to get the original characters
+	result := buf.String()
+	result = strings.ReplaceAll(result, `\u003c`, "<")
+	result = strings.ReplaceAll(result, `\u003e`, ">")
+	result = strings.ReplaceAll(result, `\u0026`, "&")
+
+	return result, nil
 }
 
 func getGonjaTemplate(source string) (*exec.Template, error) {
