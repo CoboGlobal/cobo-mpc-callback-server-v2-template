@@ -19,6 +19,13 @@
             }
           },
           {
+            "_component_type": "date_time",
+            "key": "Created Time",
+            "data": {
+              "value": {{ created_timestamp / 1000 | toInt }}
+            }
+          },
+          {
             "_component_type": "text",
             "key": "From",
             "data": {
@@ -40,13 +47,6 @@
             }
           },
           {
-            "_component_type": "date_time",
-            "key": "Created Time",
-            "data": {
-              "value": {{ created_timestamp / 1000 | toInt }}
-            }
-          },
-          {
             "_component_type": "text",
             "key": "Estimated Fee",
             "data": {
@@ -64,6 +64,21 @@
           {% endif %}
         ]
       }
+      {% if description %},
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "paragraph",
+            "_actions": [
+              "copy"
+            ],
+            "key": "Note",
+            "data": [{{ description | toString }}]
+          }
+        ]
+      }
+      {% endif %}
     ]
   }
 }

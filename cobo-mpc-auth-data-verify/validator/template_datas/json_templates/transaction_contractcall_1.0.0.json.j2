@@ -209,7 +209,7 @@
         ]
       }
       {% endif %}
-      {% if destination %},
+      {% if description %},
       {
         "_component_type": "section",
         "components": [
@@ -218,7 +218,7 @@
             "_actions": [
               "copy"
             ],
-            "key": "Description",
+            "key": "Note",
             "data": [{{ description | toString }}]
           }
         ]

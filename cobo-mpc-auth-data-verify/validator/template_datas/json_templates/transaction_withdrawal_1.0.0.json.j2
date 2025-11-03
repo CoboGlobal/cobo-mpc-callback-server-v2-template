@@ -138,7 +138,11 @@
             "data": {
               {% if source.source_type in ["Org-Controlled","User-Controlled","Web3","Safe{Wallet}"] %}
               "label": {{ show_info.from_address_label | toString }},
+              {% if source.address %}
               "value": {{ source.address | toString }}
+              {% else %}
+              "value": "Multiple addresses"
+              {% endif %}
               {% elif source.source_type in ["Asset","Main","Sub"] %}
               "value": {{ show_info.wallet_name | toString }}
               {% endif %}
@@ -161,7 +165,7 @@
             "data": {
               "label": {{ show_info.to_address_label | toString }},
               {% if destination.get("account_output") and destination.account_output.get("memo") %}
-              "value": {{ destination.account_output.address ~ "|" ~ destination.account_output.memo | toString }}
+              "value": {{ (destination.account_output.address ~ "|" ~ destination.account_output.memo) | toString }}
               {% elif destination.get("account_output") %}
               "value": {{ destination.account_output.address | toString }}
               {% else %}
@@ -249,6 +253,23 @@
           {% endif %}
         ]
       }
+      {% if description %},
+      {
+        "_component_type": "section",
+        "components": [
+          {
+            "_component_type": "paragraph",
+            "key": "Note",
+            "_actions": [
+              "copy"
+            ],
+            "data": [
+               {{ description | toString }}
+            ]
+          }
+        ]
+      }
+      {% endif %}
     ]
   }
 }

@@ -40,7 +40,7 @@ func TestBuildStatementV2(t *testing.T) {
 		"sign_message_approver_approval",
 		"sign_message_spender_check",
 		"transaction_contractcall",
-		//"transaction",
+		"transaction_messagesign",
 	}
 	for _, bizKey := range bizKeys {
 		data, err := getBizData(bizKey)
@@ -55,18 +55,23 @@ func TestBuildStatementV2(t *testing.T) {
 		assert.NoError(t, err)
 		//fmt.Printf("bizKey:\n %s\n", bizKey)
 		//fmt.Printf("Data:\n %s\n", data)
-		//fmt.Printf("Message:\n %s\n", message)
+		//fmt.Printf("build message:\n %s\n", message)
 
 		message2, err := getMessage(bizKey)
 		assert.NoError(t, err)
 
-		got, gotDiff := CompareStatementMessage(message, message2)
-		if got != true {
-			t.Errorf("key: %s, CompareStatementMessage() got = %v, want %v", bizKey, got, true)
+		if message != message2 {
+			t.Errorf("key: %s, message != message2", bizKey)
+			t.Logf("message:  \n %s", message)
+			t.Logf("message2: \n %s", message2)
 		}
-		if gotDiff != "" {
-			t.Logf("gotDiff: %s", gotDiff)
-		}
+		// got, gotDiff := CompareStatementMessage(message, message2)
+		// if got != true {
+		// 	t.Errorf("key: %s, CompareStatementMessage() got = %v, want %v", bizKey, got, true)
+		// }
+		// if gotDiff != "" {
+		// 	t.Logf("gotDiff: %s", gotDiff)
+		// }
 	}
 }
 
@@ -474,4 +479,20 @@ func TestCompareStatementMessage(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestBuildSimpleStatementV2(t *testing.T) {
+	templateContent := `
+  {
+    {% set contract_name = destination.safe_tx_extra_data.to_contract_name %}     
+    {% set action_method="abc" %}
+    {% set panel_title = contract_name ~ "." ~ action_method if contract_name | len > 0 else action_method %}
+    "title": {{ panel_title | toString }}
+  }       
+  `
+	data := `{"destination": {"safe_tx_extra_data": {"to_contract_name": "d"}}}`
+	s := NewStatementBuilder(templateContent)
+	message, err := s.Build(data)
+	assert.NoError(t, err)
+	fmt.Printf("Message:\n %s\n", message)
 }

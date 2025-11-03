@@ -8,7 +8,6 @@
     "expired_time": "2025-05-15 11:22:12",
     "statement_uuid": "uuid-abc-123",
     "vault_name": "Vault-001",
-    "value_new_group_id": "012af302-3cfb-4891-a50b-93b044d610fd",
     "new_key_share_holders": [
         {
             "holder": "yin.wang@cobo.com",
