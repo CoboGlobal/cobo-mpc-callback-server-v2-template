@@ -1,5 +1,5 @@
-filippo.io/edwards25519 v1.0.0-rc.1 h1:m0VOOB23frXZvAOK44usCgLWvtsxIoMCTBGJZlpmGfU=
-filippo.io/edwards25519 v1.0.0-rc.1/go.mod h1:N1IkdkCkiLB6tki+MYJoSx2JTY9NUlxZE7eHn5EwJns=
+filippo.io/edwards25519 v1.1.1 h1:YpjwWWlNmGIDyXOn8zLzqiD+9TyIlPhGFG96P39uBpw=
+filippo.io/edwards25519 v1.1.1/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
 github.com/CoboGlobal/cobo-waas2-go-sdk v1.15.0 h1:MqJ/46G9L/fH5PiEiNFowWw4Ay8kRmlfutJQb33btYg=
 github.com/CoboGlobal/cobo-waas2-go-sdk v1.15.0/go.mod h1:a355LlDmGbYcDqzdGyebZ5PmtNS/5cYNUPPpkJo5p10=
 github.com/StackExchange/wmi v1.2.1 h1:VIkavFPXSjcnS+O8yTq7NI32k0R5Aj+v39y29VYDOSA=
