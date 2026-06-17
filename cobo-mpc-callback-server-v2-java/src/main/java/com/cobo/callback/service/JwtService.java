@@ -1,6 +1,7 @@
 package com.cobo.callback.service;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,10 +9,14 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
 import com.cobo.callback.config.AppConfig;
 
@@ -26,8 +31,6 @@ public class JwtService {
     private static final String PACKAGE_DATA_CLAIM = "package_data";
     private static final String BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----";
     private static final String END_PUBLIC_KEY = "-----END PUBLIC KEY-----";
-    private static final String BEGIN_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----";
-    private static final String END_PRIVATE_KEY = "-----END PRIVATE KEY-----";
 
     private final AppConfig config;
     private final PublicKey clientPublicKey;
@@ -111,18 +114,34 @@ public class JwtService {
         }
     }
 
+    /**
+     * Load an RSA private key from a PEM file. BouncyCastle's {@link PEMParser} auto-detects the
+     * format, so both PKCS#1 ("BEGIN RSA PRIVATE KEY") and PKCS#8 ("BEGIN PRIVATE KEY") are accepted.
+     */
     public PrivateKey loadPrivateKey(String path) throws Exception {
         byte[] keyBytes = readKeyFile(path);
-        try {
-            String keyContent = new String(keyBytes)
-                    .replace(BEGIN_PRIVATE_KEY, "")
-                    .replace(END_PRIVATE_KEY, "")
-                    .replaceAll("\\s", "");
+        try (PEMParser pemParser = new PEMParser(new StringReader(new String(keyBytes)))) {
+            Object parsed = pemParser.readObject();
+            if (parsed == null) {
+                throw new IllegalArgumentException("No PEM object found in private key file");
+            }
 
-            byte[] decoded = Base64.getDecoder().decode(keyContent);
-            KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decoded));
-        } catch (InvalidKeySpecException e) {
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+            PrivateKeyInfo privateKeyInfo;
+            if (parsed instanceof PEMKeyPair) {
+                // PKCS#1: "-----BEGIN RSA PRIVATE KEY-----"
+                privateKeyInfo = ((PEMKeyPair) parsed).getPrivateKeyInfo();
+            } else if (parsed instanceof PrivateKeyInfo) {
+                // PKCS#8: "-----BEGIN PRIVATE KEY-----"
+                privateKeyInfo = (PrivateKeyInfo) parsed;
+            } else {
+                throw new IllegalArgumentException(
+                        "Unsupported private key format: " + parsed.getClass().getName());
+            }
+            return converter.getPrivateKey(privateKeyInfo);
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
             log.error("Invalid private key format", e);
             throw new IllegalArgumentException("Invalid private key format", e);
         }

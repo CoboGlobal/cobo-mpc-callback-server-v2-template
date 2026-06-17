@@ -81,6 +81,13 @@
             <version>1.15.0</version>
         </dependency>
 
+        <!-- BouncyCastle: parse PKCS#1 / PKCS#8 private keys (bcpkix pulls in bcprov + bcutil) -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>1.78.1</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -92,7 +99,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
 
