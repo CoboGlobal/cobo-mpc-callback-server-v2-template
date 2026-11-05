@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/big"
 	"regexp"
 	"sort"
@@ -60,6 +61,8 @@ func isPythonFalsy(val interface{}) bool {
 		return v == 0
 	case int:
 		return v == 0
+	case *big.Int:
+		return v.Sign() == 0
 	case []interface{}:
 		return len(v) == 0
 	case map[string]interface{}:
@@ -82,6 +85,8 @@ func pythonStr(val interface{}) string {
 			return "True"
 		}
 		return "False"
+	case float64:
+		return pythonFloatStr(v)
 	default:
 		return fmt.Sprintf("%v", v)
 	}
@@ -188,6 +193,88 @@ func replaceNilPathWithPythonNone(data map[string]interface{}, path []string) {
 	}
 }
 
+// decodeBizData mirrors Python's json.loads number typing: an integer literal
+// (no '.', 'e', 'E') becomes an integer, anything else a float. A plain
+// json.Unmarshal would turn every number into float64, losing the int/float
+// distinction that Python's str() depends on (1164862 vs 1164862.0).
+func decodeBizData(bizData string) (map[string]interface{}, error) {
+	dec := json.NewDecoder(strings.NewReader(bizData))
+	dec.UseNumber()
+	var data map[string]interface{}
+	if err := dec.Decode(&data); err != nil {
+		return nil, err
+	}
+	if dec.More() {
+		return nil, fmt.Errorf("unexpected trailing data after JSON value")
+	}
+	for k, v := range data {
+		data[k] = convertJSONNumbers(v)
+	}
+	return data, nil
+}
+
+func convertJSONNumbers(v interface{}) interface{} {
+	switch t := v.(type) {
+	case json.Number:
+		lit := t.String()
+		if !strings.ContainsAny(lit, ".eE") {
+			if n, err := strconv.ParseInt(lit, 10, 64); err == nil {
+				return int(n)
+			}
+			if b, ok := new(big.Int).SetString(lit, 10); ok {
+				return b // Python ints are unbounded
+			}
+		}
+		f, err := t.Float64()
+		if err != nil {
+			return lit
+		}
+		return f
+	case map[string]interface{}:
+		for k, e := range t {
+			t[k] = convertJSONNumbers(e)
+		}
+		return t
+	case []interface{}:
+		for i, e := range t {
+			t[i] = convertJSONNumbers(e)
+		}
+		return t
+	default:
+		return v
+	}
+}
+
+// pythonFloatStr mirrors Python's repr(float): shortest round-trip digits,
+// fixed notation for decimal exponents in [-4, 16), otherwise scientific with
+// a two-digit exponent; integral values keep a ".0" suffix.
+func pythonFloatStr(f float64) string {
+	switch {
+	case math.IsNaN(f):
+		return "nan"
+	case math.IsInf(f, 1):
+		return "inf"
+	case math.IsInf(f, -1):
+		return "-inf"
+	}
+	e := strconv.FormatFloat(f, 'e', -1, 64) // d.ddde±XX
+	mant, expStr, _ := strings.Cut(e, "e")
+	exp, _ := strconv.Atoi(expStr)
+	if exp >= -4 && exp < 16 {
+		out := strconv.FormatFloat(f, 'f', -1, 64)
+		if !strings.Contains(out, ".") {
+			out += ".0"
+		}
+		return out
+	}
+	sign := "+"
+	if exp < 0 {
+		sign = "-"
+		exp = -exp
+	}
+	return fmt.Sprintf("%se%s%02d", mant, sign, exp)
+}
+
 // getGonjaFilters returns a list of custom filters to be used with Gonja
 func getGonjaFilters() map[string]exec.FilterFunction {
 	return map[string]exec.FilterFunction{
@@ -206,9 +293,12 @@ func getGonjaFilters() map[string]exec.FilterFunction {
 				return exec.AsValue(string(bytes))
 			case pythonNone:
 				return exec.AsValue("null")
+			case *big.Int:
+				bytes, _ := json.Marshal(v.String())
+				return exec.AsValue(string(bytes))
 			case float64:
 				// For floats, convert to string representation, then JSON marshal
-				str := fmt.Sprintf("%v", v)
+				str := pythonFloatStr(v)
 				bytes, _ := json.Marshal(str)
 				return exec.AsValue(string(bytes))
 
@@ -227,6 +317,8 @@ func getGonjaFilters() map[string]exec.FilterFunction {
 			case float64:
 				return exec.AsValue(int(val))
 			case int:
+				return exec.AsValue(val)
+			case *big.Int:
 				return exec.AsValue(val)
 			case bool:
 				if val {
@@ -377,8 +469,8 @@ func getGonjaDictMethods() *exec.MethodSet[map[string]interface{}] {
 }
 
 func (s *StatementBuilder) Build(bizData string) (string, error) {
-	var data map[string]interface{}
-	if err := json.Unmarshal([]byte(bizData), &data); err != nil {
+	data, err := decodeBizData(bizData)
+	if err != nil {
 		fmt.Printf("Error parsing JSON data for build statement: %v\n", err)
 		return "", fmt.Errorf("error parsing JSON data: %w", err)
 	}
